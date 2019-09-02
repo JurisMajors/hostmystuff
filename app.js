@@ -3,10 +3,11 @@ const fs = require('fs-extra');
 const Busboy = require('busboy');
 const path = require('path');
 const crypto = require('crypto');
-const { exec } = require('child_process');
 const app = express();
 
 const PORT = 8080;
+const CLEARING_AGE = 500;
+const CLEARING_FREQUENCY = 3000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
 
@@ -24,6 +25,23 @@ fs.pathExists(FILE_DIR, (err, exists) => {
     }
 });
 
+setInterval(() => {
+    fs.readdir(FILE_DIR, (err, files) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        files.forEach((file) => {
+            const pathTo = `${FILE_DIR}${file}`;
+            const aliveFor = Date.now() - fs.statSync(pathTo).mtime;
+            if (aliveFor >= CLEARING_AGE) { // delete if too old
+                fs.unlinkSync(pathTo);
+            }
+        });
+
+    });
+}, CLEARING_FREQUENCY);
+
 const getFileName = (realName) => {
     return crypto.createHash("sha256")
              .update(`${realName}${Date.now()}`)
@@ -39,15 +57,8 @@ app.get('/:hash', (req, res) => {
             res.writeHead(404);
             res.write("No such link exists");
         } else {
-            exec(`file --mime-type ${path.join(FILE_DIR,fileHash)}`, (err, stdout) => {
-                if (!err) {
-                    const mime_type = stdout.split(': ')[1].replace(/(\r\n|\n|\r)/gm, "");;
-                    console.log(mime_type);
-                    res.set('Content-Type', mime_type);
-                }
-                res.write(data);
-                res.end();
-            });
+            res.write(data);
+            res.end();
         }
     });
 });
