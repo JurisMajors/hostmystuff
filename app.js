@@ -3,10 +3,11 @@ const fs = require('fs-extra');
 const Busboy = require('busboy');
 const path = require('path');
 const crypto = require('crypto');
-const app = express();
+const { exec } = require('child_process');
 
+const app = express();
 const PORT = 8080;
-const CLEARING_AGE = 500;
+const CLEARING_AGE = 5000000;
 const CLEARING_FREQUENCY = 300000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
@@ -56,17 +57,37 @@ const getFileName = (realName) => {
              .substring(0, 7);   
 }
 
+const isNotVideoOrImage = (mimetype) => mimetype.indexOf("image") <= -1 && mimetype.indexOf("video") <= -1
+
+
+const writeToHtml = (res, data, mimetype) => {
+    if (isNotVideoOrImage(mimetype)) {
+        // add prettify
+        res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
+        res.write('<pre class="prettyprint">');
+    }
+
+    res.write(data);
+
+    if (isNotVideoOrImage(mimetype)) {
+        res.write('</pre>');
+    }
+}
+
+
 // get uploaded file
 app.get('/:hash', (req, res) => {
-    const fileHash = req.params.hash;
-    fs.readFile(path.join(FILE_DIR,fileHash), null, (error, data) => {
-        if (error) {
-            res.writeHead(404);
-            res.write("No such link exists");
-        } else {
-            res.write(data);
+    const filePath = path.join(FILE_DIR, req.params.hash);
+    exec (`file --mime-type ${filePath}`, (err, stdout, stderr) => {
+        fs.readFile(filePath, null, (error, data) => {
+            if (error) {
+                res.writeHead(404);
+                res.write("No such link exists");
+            } else {
+                writeToHtml(res, data, stdout);
+            }
             res.end();
-        }
+        });
     });
 });
 
@@ -82,7 +103,7 @@ app.post('/', (req, res) => {
 
     let name;
     busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
-        if (blacklist.indexOf(mimetype) <= -1) {
+        if (blacklist.indexOf(mimetype) > -1) {
             res.status('403');
             res.end(`${mimetype} 403: Invalid mime-type thats located in blacklist`);
             return;
