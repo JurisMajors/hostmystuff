@@ -11,6 +11,12 @@ const CLEARING_FREQUENCY = 3000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
 
+const blacklist = [
+    'application/x-dosexec', 
+    'application/x-executable', 
+    'application/vnd.android.package-archive'
+]
+
 
 fs.pathExists(FILE_DIR, (err, exists) => {
     if (err) {
@@ -70,11 +76,15 @@ app.post('/', (req, res) => {
     const authorized_keys = fs.readFileSync('authorized.json');
     if (!req.headers.key || authorized_keys.indexOf(req.headers.key) <= -1) {
         res.status('401');
-        res.send('Unauthorized. Missing key header or not an authorized key.\n');
+        res.send('401: Unauthorized. Missing key header or not an authorized key.\n');
     } 
 
     let name;
     busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
+        if (blacklist.indexOf(mimetype) <= -1) {
+            res.status('403');
+            res.send(`403: Invalid mime-type thats located in blacklist`);
+        }
         name = getFileName(filename);
         const savePath = path.join(FILE_DIR, name);
         file.pipe(fs.createWriteStream(savePath));
