@@ -17,6 +17,7 @@ const blacklist = [
     'application/vnd.android.package-archive'
 ]
 
+app.use(express.static('public'));
 
 fs.pathExists(FILE_DIR, (err, exists) => {
     if (err) {

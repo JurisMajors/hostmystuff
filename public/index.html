@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HostMyStuff</title>
+</head>
+<body>
+
+<h1> Welcome to HostMyStuff </h1>
+<p> To use this service, you must ask for whoever is hosting it for an api key to use it. Unless, of course, they have disabled authorization. </p>
+
+<p> Example upload: 
+    <code>curl --header 'key: your-api-key' -F'file=@file-name' host-of-this-website </code>
+</p>
+
+<p> Some mime-types are not allowed:<ul> 
+        <li>'application/x-dosexec'</li>
+        <li>'application/x-executable'</li>
+        <li>'application/vnd.android.package-archive' </li>
+    </ul>
+</p>
+
+
+<p> Files get <b>deleted</b> after 24 hours! </p>
+</body>
+</html> 
+
