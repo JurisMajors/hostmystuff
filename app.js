@@ -7,7 +7,7 @@ const app = express();
 
 const PORT = 8080;
 const CLEARING_AGE = 500;
-const CLEARING_FREQUENCY = 3000;
+const CLEARING_FREQUENCY = 300000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
 
@@ -77,14 +77,15 @@ app.post('/', (req, res) => {
     const authorized_keys = fs.readFileSync('authorized.json');
     if (!req.headers.key || authorized_keys.indexOf(req.headers.key) <= -1) {
         res.status('401');
-        res.send('401: Unauthorized. Missing key header or not an authorized key.\n');
+        res.end('401: Unauthorized. Missing key header or not an authorized key.\n');
     } 
 
     let name;
     busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
         if (blacklist.indexOf(mimetype) <= -1) {
             res.status('403');
-            res.send(`403: Invalid mime-type thats located in blacklist`);
+            res.end(`${mimetype} 403: Invalid mime-type thats located in blacklist`);
+            return;
         }
         name = getFileName(filename);
         const savePath = path.join(FILE_DIR, name);
