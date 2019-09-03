@@ -69,8 +69,8 @@ const writeWithHighlight = (res, data) => {
     res.write('</pre>');
 }
 
-const writeToHtml = (res, data, mimetype) => {
-    if (isNotVideoOrImage(mimetype)) {
+const writeToHtml = (shouldHighlight, res, data, mimetype) => {
+    if (isNotVideoOrImage(mimetype) && shouldHighlight) {
         writeWithHighlight(res, data);
     } else {
         res.write(data);
@@ -87,7 +87,7 @@ app.get('/:hash', (req, res) => {
                 res.writeHead(404);
                 res.write("No such link exists");
             } else {
-                writeToHtml(res, data, stdout);
+                writeToHtml(!req.query.nohighlight, res, data, stdout);
             }
             res.end();
         });
