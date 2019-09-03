@@ -12,7 +12,7 @@ const CLEARING_FREQUENCY = 300000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
 
-const blacklist = [
+const mimetypeBlacklist = [
     'application/x-dosexec', 
     'application/x-executable', 
     'application/vnd.android.package-archive'
@@ -25,6 +25,7 @@ fs.pathExists(FILE_DIR, (err, exists) => {
         console.error(err);
         return;
     }
+
     if (!exists) {
         console.log(`Making directory to store files at ${FILE_DIR}`);
         fs.ensureDir(FILE_DIR)
@@ -39,9 +40,11 @@ setInterval(() => {
             console.error(err);
             return;
         }
+
         files.forEach((file) => {
             const pathTo = `${FILE_DIR}${file}`;
             const aliveFor = Date.now() - fs.statSync(pathTo).mtime;
+
             if (aliveFor >= CLEARING_AGE) { // delete if too old
                 fs.unlinkSync(pathTo);
             }
@@ -50,27 +53,27 @@ setInterval(() => {
     });
 }, CLEARING_FREQUENCY);
 
-const getFileName = (realName) => {
-    return crypto.createHash("sha256")
-             .update(`${realName}${Date.now()}`)
-             .digest("hex")
-             .substring(0, 7);   
-}
+const getFileName = (realName) => crypto.createHash("sha256")
+                                        .update(`${realName}${Date.now()}`)
+                                        .digest("hex")
+                                        .substring(0, 7);   
 
 const isNotVideoOrImage = (mimetype) => mimetype.indexOf("image") <= -1 && mimetype.indexOf("video") <= -1
 
-
-const writeToHtml = (res, data, mimetype) => {
-    if (isNotVideoOrImage(mimetype)) {
-        // add prettify
-        res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
-        res.write('<pre class="prettyprint">');
-    }
+const writeWithHighlight = (res, data) => {
+    res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
+    res.write('<pre class="prettyprint">');
 
     res.write(data);
 
+    res.write('</pre>');
+}
+
+const writeToHtml = (res, data, mimetype) => {
     if (isNotVideoOrImage(mimetype)) {
-        res.write('</pre>');
+        writeWithHighlight(res, data);
+    } else {
+        res.write(data);
     }
 }
 
@@ -91,33 +94,43 @@ app.get('/:hash', (req, res) => {
     });
 });
 
+const isAPIKeyValid = (key) => {
+    const authorized_keys = fs.readFileSync('authorized.json');
+    return authorized_keys.indexOf(key) > -1;
+}
+
+const createBusboyFileHandler = (requestHeaders, res) => {
+    const busboy = new Busboy({ headers: requestHeaders });
+    let name;
+
+    busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
+        if (mimetypeBlacklist.indexOf(mimetype) > -1) {
+            res.status('403');
+            res.end(`${mimetype} 403: Invalid mime-type thats located in the mimetype blacklist`);
+        } 
+        else {
+            name = getFileName(filename);
+            const savePath = path.join(FILE_DIR, name);
+            file.pipe(fs.createWriteStream(savePath));
+        }
+    });
+
+    busboy.on('finish', () => {
+        // send location of file 
+        res.end(`${ADDRESS}:${PORT}/${name}\n`);
+    });
+
+    return busboy;
+}
+
 // upload
 app.post('/', (req, res) => {
-    const busboy = new Busboy({ headers: req.headers });
-
-    const authorized_keys = fs.readFileSync('authorized.json');
-    if (!req.headers.key || authorized_keys.indexOf(req.headers.key) <= -1) {
+    if (!isAPIKeyValid(req.headers.key)) {
         res.status('401');
         res.end('401: Unauthorized. Missing key header or not an authorized key.\n');
     } 
 
-    let name;
-    busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
-        if (blacklist.indexOf(mimetype) > -1) {
-            res.status('403');
-            res.end(`${mimetype} 403: Invalid mime-type thats located in blacklist`);
-            return;
-        }
-        name = getFileName(filename);
-        const savePath = path.join(FILE_DIR, name);
-        file.pipe(fs.createWriteStream(savePath));
-    });
-
-    busboy.on('finish', () => {
-        res.end(`${ADDRESS}:${PORT}/${name}\n`);
-    });
-
-    return req.pipe(busboy);
+    return req.pipe(createBusboyFileHandler(req.headers, res));
 });
 
 
