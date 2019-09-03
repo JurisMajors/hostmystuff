@@ -87,7 +87,7 @@ app.get('/:hash', (req, res) => {
                 res.writeHead(404);
                 res.write("No such link exists");
             } else {
-                writeToHtml(!req.query.nohighlight, res, data, stdout);
+                writeToHtml(!req.query.raw, res, data, stdout);
             }
             res.end();
         });
