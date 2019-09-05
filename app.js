@@ -58,7 +58,7 @@ const getFileName = (realName) => crypto.createHash("sha256")
                                         .digest("hex")
                                         .substring(0, 7);   
 
-const isNotVideoOrImage = (mimetype) => mimetype.indexOf("image") <= -1 && mimetype.indexOf("video") <= -1
+const isNotVideoOrImage = (mimetype) => mimetype.indexOf("image") <= -1 && mimetype.indexOf("video") <= -1 && mimetype.indexOf("audio") <= -1;
 
 const writeWithHighlight = (res, data) => {
     res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
@@ -71,6 +71,9 @@ const writeWithHighlight = (res, data) => {
 
 const writeToHtml = (shouldHighlight, res, data, mimetype) => {
     if (isNotVideoOrImage(mimetype) && shouldHighlight) {
+        console.log(isNotVideoOrImage(mimetype));
+        console.log(mimetype);
+        console.log(shouldHighlight);
         writeWithHighlight(res, data);
     } else {
         res.write(data);
