@@ -4,25 +4,28 @@
 <title>HostMyStuff</title>
 </head>
 <body>
-    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"> </script>
 
 <h1> Welcome to HostMyStuff </h1>
-<p> To use this service, you must ask for whoever is hosting it for an api key to use it. Unless, of course, they have disabled authorization. </p>
+<p> To use this service, you must get an api key.</p>
 
 <p> Example upload: 
-    <code>curl --header 'key: your-api-key' -F'file=@file-name' host-of-this-website </code>
+    <code>curl --header 'key: your-api-key' -F'file=@file-name' https://www.hostmystuff.ml</code>
 </p>
 
-<p> Some mime-types are not allowed:<ul> 
-        <li>'application/x-dosexec'</li>
-        <li>'application/x-executable'</li>
-        <li>'application/vnd.android.package-archive' </li>
-    </ul>
-</p>
+<p> Max file size is 512M </p>
+<p> Files get <b>deleted</b> after 13 hours! </p>
 
-<p> Files get <b>deleted</b> after 24 hours! </p>
-
-<p> To not apply syntax highlighting simply supply a <i>raw</i> query parameter to the get request <code>?raw=true</code>. Useful in-case of a bug for when its applied or in case you want to download the file without html (e.g. wget), .</p>
+<h2> Syntax highlighting </h2>
+<p> HostMyStuff supports syntax highlighting. See this hello world programme with some highlight sugar</p>
+<pre class="prettyprint">
+public class HelloWorld {
+	public static void main(String... args) {
+		System.out.println("Hello World!");	
+	}	
+}
+</pre>
+<p> To not apply syntax highlighting simply supply a <i>raw</i> query parameter to the GET request <code>?raw=true</code>. Useful in-case of a bug for highlighting is applied (please report them if you find any) or in case you want to download the file (e.g. wget).</p>
 </body>
 </html> 
 

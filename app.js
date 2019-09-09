@@ -8,13 +8,16 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = 8080;
 const CLEARING_AGE = 5000000;
-const CLEARING_FREQUENCY = 300000;
+const CLEARING_FREQUENCY = 30000000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
 
 const mimetypeBlacklist = [
     'application/x-dosexec', 
     'application/x-executable', 
+    'application/x-pie-executable', 
+    'application/x-sharedlib', 
+    'application/x-application', 
     'application/vnd.android.package-archive'
 ]
 
@@ -35,6 +38,8 @@ fs.pathExists(FILE_DIR, (err, exists) => {
 });
 
 setInterval(() => {
+    console.log("CLEARING FILES");
+    let count = 0;
     fs.readdir(FILE_DIR, (err, files) => {
         if (err) {
             console.error(err);
@@ -46,11 +51,12 @@ setInterval(() => {
             const aliveFor = Date.now() - fs.statSync(pathTo).mtime;
 
             if (aliveFor >= CLEARING_AGE) { // delete if too old
+		count = count + 1;
                 fs.unlinkSync(pathTo);
             }
         });
-
     });
+    console.log(`CLEARED ${count} files`);
 }, CLEARING_FREQUENCY);
 
 const getFileName = (realName) => crypto.createHash("sha256")
@@ -58,7 +64,7 @@ const getFileName = (realName) => crypto.createHash("sha256")
                                         .digest("hex")
                                         .substring(0, 7);   
 
-const isNotVideoOrImage = (mimetype) => mimetype.indexOf("image") <= -1 && mimetype.indexOf("video") <= -1 && mimetype.indexOf("audio") <= -1;
+const isText = (mimetype) => mimetype.indexOf("text") > -1;
 
 const writeWithHighlight = (res, data) => {
     res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
@@ -70,10 +76,7 @@ const writeWithHighlight = (res, data) => {
 }
 
 const writeToHtml = (shouldHighlight, res, data, mimetype) => {
-    if (isNotVideoOrImage(mimetype) && shouldHighlight) {
-        console.log(isNotVideoOrImage(mimetype));
-        console.log(mimetype);
-        console.log(shouldHighlight);
+    if (isText(mimetype) && shouldHighlight) {
         writeWithHighlight(res, data);
     } else {
         res.write(data);
@@ -113,6 +116,9 @@ const createBusboyFileHandler = (requestHeaders, res) => {
         } 
         else {
             name = getFileName(filename);
+            console.log(`name: ${name}`);
+	    console.log(`mimetype: ${mimetype}`);
+
             const savePath = path.join(FILE_DIR, name);
             file.pipe(fs.createWriteStream(savePath));
         }
@@ -120,7 +126,7 @@ const createBusboyFileHandler = (requestHeaders, res) => {
 
     busboy.on('finish', () => {
         // send location of file 
-        res.end(`${ADDRESS}:${PORT}/${name}\n`);
+        res.end(`www.hostmystuff.ml/${name}\n`);
     });
 
     return busboy;
@@ -132,6 +138,8 @@ app.post('/', (req, res) => {
         res.status('401');
         res.end('401: Unauthorized. Missing key header or not an authorized key.\n');
     } 
+
+    console.log(`With key: ${req.headers.key} uploaded file: {`)
 
     return req.pipe(createBusboyFileHandler(req.headers, res));
 });
