@@ -7,7 +7,7 @@ const { exec } = require('child_process');
 
 const app = express();
 const PORT = 8080;
-const CLEARING_AGE = 5000000;
+const CLEARING_AGE = 86400000;
 const CLEARING_FREQUENCY = 30000000;
 const ADDRESS = 'localhost';
 const FILE_DIR = path.join(__dirname, '/files/');
