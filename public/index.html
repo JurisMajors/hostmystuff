@@ -8,17 +8,40 @@
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"> </script>
 
     <main>
-<h1> Welcome to HostMyStuff </h1>
+<h1> Welcome to HostMyStuff !</h1>
 
-<p> To use this service, you must get an api key.</p>
+<h2> Authentication </h2>
+<p> To use this service, your gpg public key must be part of my key-ring.</p>
+<h3> What? </h3>
+<p>Generate a gpg key if you haven't <code> gpg --full-generate-key </code></p>
+
+<p>Upload your gpg key to a keyserver, preferrably <a href="https://keys.openpgp.org/"> this one</a></p>
+
+<p>Then provide me with the e-mail your key is registered with so I can fetch it from the keyserver</p>
+
+
+<p> All files that are uploaded must be digitally signed (see example below) </p>
 
 <p> Example upload: 
-    <code>curl --header 'key: api-key' -F'file=@file-name' https://www.hostmystuff.ml</code>
+    <pre class="prettyprint">
+    # create tmp file
+    TMPFILE='/tmp/hostmystuff.tmp';
+    # sign the file that you wish to upload 
+    SIGNATURE=$(gpg --sign --output $TMPFILE 'path-to-file');
+    # do the request
+    LINK=$(curl -F"file=@$TMPFILE" https://www.hostmystuff.ml)
+    # remove the tmp file
+    $(rm $TMPFILE)
+    # put the link to the file in stdout
+    echo "$LINK"
+    </pre>
 </p>
-<p> Max file size is 512M </p>
-<p> Files get <b>deleted</b> after 24 hours! </p>
+
+And yes.. it will ask you for your passphrase sometimes when you upload, deal with it!
+
 
 <h2> Syntax highlighting </h2>
+
 <p> HostMyStuff supports syntax highlighting. See this hello world programme with some highlight sugar</p>
 <pre class="prettyprint">
 public class HelloWorld {
@@ -28,7 +51,14 @@ public class HelloWorld {
 }
 </pre>
 <p> To not apply syntax highlighting simply supply a <i>raw</i> query parameter to the GET request <code>?raw=true</code>. Useful in-case of a bug for highlighting is applied (please report them if you find any) or in case you want to download the file (e.g. wget).</p>
+
+<h2> Other information</h2>
+<p> Max file size is 512M </p>
+<p> Files get <b>deleted</b> after 24 hours! </p>
+
+    
     </main>
+
 </body>
 </html> 
 
