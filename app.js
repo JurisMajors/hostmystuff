@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const Busboy = require('busboy');
 const path = require('path');
 const crypto = require('crypto');
+const auth = require('./authentication.js')
 const { exec } = require('child_process');
 
 const app = express();
@@ -59,10 +60,10 @@ setInterval(() => {
     console.log(`CLEARED ${count} files`);
 }, CLEARING_FREQUENCY);
 
-const getFileName = (realName) => crypto.createHash("sha256")
+const getFileName = (realName) => `${crypto.createHash("sha256")
                                         .update(`${realName}${Date.now()}`)
                                         .digest("hex")
-                                        .substring(0, 7);   
+                                        .substring(0, 7)}.gpg`;   
 
 const isText = (mimetype) => mimetype.indexOf("text") > -1;
 
@@ -100,11 +101,6 @@ app.get('/:hash', (req, res) => {
     });
 });
 
-const isAPIKeyValid = (key) => {
-    const authorized_keys = fs.readFileSync('authorized.json');
-    return authorized_keys.indexOf(key) > -1;
-}
-
 const createBusboyFileHandler = (requestHeaders, res) => {
     const busboy = new Busboy({ headers: requestHeaders });
     let name;
@@ -117,16 +113,26 @@ const createBusboyFileHandler = (requestHeaders, res) => {
         else {
             name = getFileName(filename);
             console.log(`name: ${name}`);
-	    console.log(`mimetype: ${mimetype}`);
+	        console.log(`mimetype: ${mimetype}`);
+            console.log('}')
 
             const savePath = path.join(FILE_DIR, name);
             file.pipe(fs.createWriteStream(savePath));
         }
     });
 
-    busboy.on('finish', () => {
+    busboy.on('finish', async () => {
         // send location of file 
-        res.end(`www.hostmystuff.ml/${name}\n`);
+        await auth.decryptFile(path.join(FILE_DIR, name),
+                                     path.join(FILE_DIR, name.replace('.gpg', ''))
+                                 )
+            .then(filePath => res.end(`localhost:8080/${name.replace('.gpg', '')}\n`))
+            .catch(err => {
+                res.status('401');
+                res.end(err);
+            });
+        // delete signature file
+        fs.unlinkSync(path.join(FILE_DIR, name))
     });
 
     return busboy;
@@ -134,13 +140,6 @@ const createBusboyFileHandler = (requestHeaders, res) => {
 
 // upload
 app.post('/', (req, res) => {
-    if (!isAPIKeyValid(req.headers.key)) {
-        res.status('401');
-        res.end('401: Unauthorized. Missing key header or not an authorized key.\n');
-    } 
-
-    console.log(`With key: ${req.headers.key} uploaded file: {`)
-
     return req.pipe(createBusboyFileHandler(req.headers, res));
 });
 
