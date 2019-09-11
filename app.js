@@ -113,7 +113,7 @@ const createBusboyFileHandler = (requestHeaders, res) => {
         else {
             name = getFileName(filename);
             console.log(`name: ${name}`);
-	        console.log(`mimetype: ${mimetype}`);
+            console.log(`mimetype: ${mimetype}`);
             console.log('}')
 
             const savePath = path.join(FILE_DIR, name);
