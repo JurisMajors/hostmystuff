@@ -12,10 +12,10 @@ The homepage contains more detailed information, including
 * Enabling/disabling syntax highlighting
 
 # TODO
-[ ] CI/CD
-[ ] Automatic gpg key addition from a file on deployment (need CI/CD first)
-[ ] Dockerize
+- [ ] CI/CD
+- [ ] Automatic gpg key addition from a file on deployment (need CI/CD first)
+- [ ] Dockerize
 
 # DONE
-[x] Syntax highlighting
-[x] Digital signature based authentication
+- [x] Syntax highlighting
+- [x] Digital signature based authentication
