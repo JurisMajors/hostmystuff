@@ -3,8 +3,9 @@ const fs = require('fs-extra');
 const Busboy = require('busboy');
 const path = require('path');
 const crypto = require('crypto');
-const auth = require('./authentication.js')
 const { exec } = require('child_process');
+const auth = require('./authentication.js');
+const clearOldFiles = require('./clearer.js');
 
 const app = express();
 const PORT = 8080;
@@ -39,25 +40,7 @@ fs.pathExists(FILE_DIR, (err, exists) => {
 });
 
 setInterval(() => {
-    console.log("CLEARING FILES");
-    let count = 0;
-    fs.readdir(FILE_DIR, (err, files) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        files.forEach((file) => {
-            const pathTo = `${FILE_DIR}${file}`;
-            const aliveFor = Date.now() - fs.statSync(pathTo).mtime;
-
-            if (aliveFor >= CLEARING_AGE) { // delete if too old
-		count = count + 1;
-                fs.unlinkSync(pathTo);
-            }
-        });
-    });
-    console.log(`CLEARED ${count} files`);
+    clearOldFiles(FILE_DIR, CLEARING_AGE);
 }, CLEARING_FREQUENCY);
 
 const getFileName = (realName) => `${crypto.createHash("sha256")
