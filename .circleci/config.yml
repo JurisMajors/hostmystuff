@@ -14,7 +14,7 @@ jobs:
               - $SSHFINGERPRINT
       - run:
           command: | 
-            ssh -p $SSHPORT $SSHUSER@SSHHOST "docker run -p 8080:8080 -d hostmystuff"
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "docker run -p 8080:8080 -d hostmystuff"
 
 workflows:
   version: 2
