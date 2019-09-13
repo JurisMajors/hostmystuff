@@ -9,7 +9,7 @@ const app = express();
 const PORT = 8080;
 const CLEARING_AGE = 86400000;
 const CLEARING_FREQUENCY = 30000000;
-const ADDRESS = 'localhost';
+const ADDRESS = '0.0.0.0';
 const FILE_DIR = path.join(__dirname, '/files/');
 
 app.use(express.static('public'));
