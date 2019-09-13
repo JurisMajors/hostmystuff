@@ -1,7 +1,7 @@
 const Busboy = require('busboy');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const auth = require('./authentication.js');
 
 const mimetypeBlacklist = [

@@ -1,10 +1,9 @@
 const express = require('express');
-const fs = require('fs-extra');
 const path = require('path');
-const { exec } = require('child_process');
 const clearOldFiles = require('./src/clearer.js');
 const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
+const initialize = require('./src/initializer.js');
 
 const app = express();
 const PORT = 8080;
@@ -15,24 +14,10 @@ const FILE_DIR = path.join(__dirname, '/files/');
 
 app.use(express.static('public'));
 
-fs.pathExists(FILE_DIR, (err, exists) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
+initialize(FILE_DIR);
 
-    if (!exists) {
-        console.log(`Making directory to store files at ${FILE_DIR}`);
-        fs.ensureDir(FILE_DIR)
-            .then(() => console.log("Directory created successfully!"))
-            .catch(err => console.error(err));
-    }
-});
-
-setInterval(() => {
-    clearOldFiles(FILE_DIR, CLEARING_AGE);
-}, CLEARING_FREQUENCY);
-
+// periodically clear old files
+setInterval(() => clearOldFiles(FILE_DIR, CLEARING_AGE), CLEARING_FREQUENCY);
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
@@ -44,7 +29,6 @@ app.get('/:hash', (req, res) => {
 app.post('/', (req, res) => {
     return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR));
 });
-
 
 
 app.listen(PORT, ADDRESS, function() {

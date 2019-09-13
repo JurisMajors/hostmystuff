@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const { exec } = require('child_process');
 
 const isText = (mimetype) => mimetype.startsWith("text");

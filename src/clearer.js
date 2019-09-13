@@ -1,5 +1,5 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs-extra');
+const path = require('path');
 
 function clearOldFiles(FILE_DIR, CLEARING_AGE) {
     let count = 0;
