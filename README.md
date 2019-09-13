@@ -11,15 +11,18 @@ The homepage contains more detailed information, including
 
 # Running 
 Hostmystuff runs within docker, therefore make sure you have it installed.
-First build the container `docker build -t hostmystuff .`
-Then run the container `docker run -p 8080:8080 -d hostmystuff`
-Hostmystuff is now served on `localhost:8080`
+
+First build the container: `docker build -t hostmystuff .`
+
+Then run the container: `docker run -p 8080:8080 -d hostmystuff`
+
+The website is now served on `localhost:8080`
 
 # TODO
 - [ ] CI/CD
 - [ ] Automatic gpg key addition from a file on deployment (need CI/CD first)
-- [ ] Dockerize
 
 # DONE
 - [x] Syntax highlighting
 - [x] Digital signature based authentication
+- [x] Dockerize
