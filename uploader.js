@@ -51,6 +51,7 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
     });
 
     busboy.on('finish', async () => {
+        // TODO: HANDLE MIMETYPE BLACKLISTS HERE
         // send location of file 
         await decryptAndSaveFile(name, FILE_DIR, res);
         // delete signature file
