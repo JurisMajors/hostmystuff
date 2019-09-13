@@ -2,9 +2,9 @@ const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
-const clearOldFiles = require('./clearer.js');
-const createBusboyFileHandler = require('./uploader.js');
-const serveFileToHtml = require('./fileServer.js');
+const clearOldFiles = require('./src/clearer.js');
+const createBusboyFileHandler = require('./src/uploader.js');
+const serveFileToHtml = require('./src/fileServer.js');
 
 const app = express();
 const PORT = 8080;

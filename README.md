@@ -6,7 +6,7 @@ It is simple to get it up and running just run `npm install` and then `node app.
 
 The homepage contains more detailed information, including
 * How to upload
-    * see [`test-upload.sh`](https://github.com/JurisMajors/hostmystuff/blob/master/test-upload.sh)
+    * see `scripts/test-upload.sh`
     * Or also my [personal upload script](https://github.com/JurisMajors/dotfiles/blob/master/bin/upload)
 * Preferred ways to transfer gpg-keys
 * Enabling/disabling syntax highlighting

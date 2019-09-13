@@ -14,7 +14,6 @@ const writeWithHighlight = (res, data) => {
 
 const writeToHtml = (shouldHighlight, res, data, mimetype) => {
     if (isText(mimetype) && shouldHighlight) {
-        console.log("HIGHLIGHT");
         writeWithHighlight(res, data);
     } else {
         res.write(data);
