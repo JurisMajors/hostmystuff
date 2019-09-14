@@ -5,14 +5,19 @@ WORKDIR /usr/src/app
 # copy required source files
 COPY package*.json ./
 COPY app.js ./
+
 RUN mkdir -p ./src/
 RUN mkdir -p ./public/
-COPY src/*.js ./src/
+RUN mkdir -p ./scripts/
+
+COPY src/* ./src/
 COPY public/* ./public/
+COPY scripts/* ./scripts/
 
 # install dependencies
 RUN npm install
-RUN gpg --keyserver keys.openpgp.org --recv-keys 298E80F573A9B6EB16248786A988F378C53EAE87
+
+RUN cd scripts/ && ./addAuthorizedKeys.sh
 
 EXPOSE 8080
 

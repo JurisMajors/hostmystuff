@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
+const gpg = require('gpg');
 
-const initialize = (FILE_DIR) => {
-    // ensure directory for saving files exist
+const ensureFileDirectory = (FILE_DIR) => {
     fs.pathExists(FILE_DIR, (err, exists) => {
         if (err) {
             console.error(err);
@@ -15,7 +15,11 @@ const initialize = (FILE_DIR) => {
                 .catch(err => console.error(err));
         }
     });
-    
+}
+
+const initialize = (FILE_DIR) => {
+    // ensure directory for saving files exist
+    ensureFileDirectory(FILE_DIR);
 }
 
 module.exports = initialize;
