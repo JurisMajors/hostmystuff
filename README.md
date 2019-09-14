@@ -10,19 +10,15 @@ The homepage contains more detailed information, including
 * Enabling/disabling syntax highlighting
 
 # Running 
-Hostmystuff runs within docker, therefore make sure you have it installed.
+Hostmystuff runs within docker/docker-compose, therefore make sure you have it installed.
 
-First build the container: `docker build -t hostmystuff .`
-
-Then run the container: `docker run -p 8080:8080 -d hostmystuff`
-
-The website is now served on `localhost:8080`
+Running `docker-compose up --build -d` will build and serve the website on `localhost:8080`
 
 # TODO
-- [ ] CI/CD
 - [ ] Automatic gpg key addition from a file on deployment (need CI/CD first)
 
 # DONE
+- [x] CI/CD
 - [x] Syntax highlighting
 - [x] Digital signature based authentication
 - [x] Dockerize
