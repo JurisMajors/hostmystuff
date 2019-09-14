@@ -13,8 +13,9 @@ jobs:
           fingerprints:
               - $SSHFINGERPRINT
       - run:
+          name: Run HostMyStuff in Docker
           command: | 
-            ssh -p $SSHPORT $SSHUSER@$SSHHOST "docker run -p 8080:8080 -d hostmystuff"
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "docker-compose up --build -d"
 
 workflows:
   version: 2

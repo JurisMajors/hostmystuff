@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  hostmystuff:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+          - "8080:8080"
+      volumes:
+          - $PWD/files/:/usr/src/app/files
