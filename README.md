@@ -16,11 +16,18 @@ Hostmystuff runs within docker/docker-compose, therefore make sure you have it i
 
 Running `docker-compose up --build -d` will build and serve the website on `localhost:8080`
 
+# Add keys
+
+In the `scripts/` directory, the file `authorizedKeys` defines all the gpg keyID's that are authorized to upload.
+
+Each new key should be in a seperate line. If no keyserver is provided keys.openpgp.org is used.
+If you want to have access to hostmystuff, you must make a PR that adds your key or send the information to me as PM.
+
 # TODO
-- [ ] Automatic gpg key addition from a file on deployment (need CI/CD first)
 
 # DONE
 - [x] CI/CD
+- [x] Automatic gpg key addition from a file on deployment (need CI/CD first)
 - [x] Syntax highlighting
 - [x] Digital signature based authentication
 - [x] Dockerize
