@@ -31,7 +31,7 @@
     # do the request
     LINK=$(curl -F"file=@$TMPFILE" https://www.hostmystuff.ml)
     # remove the tmp file
-    $(rm $TMPFILE)
+    $(rm -f $TMPFILE)
     # put the link to the file in stdout
     echo "$LINK"
     </pre>
