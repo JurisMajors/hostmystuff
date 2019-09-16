@@ -14,12 +14,14 @@ See the source code and more information <a href="https://github.com/JurisMajors
 <h2> Authentication </h2>
 <p> To use this service, your gpg public key must be part of my key-ring.</p>
 <h3> What? </h3>
-<p>Generate a gpg key if you haven't <code> gpg --full-generate-key </code></p>
+<p>Generate a gpg key if you don't have one already</p>
+<code> gpg --full-generate-key </code>
 
-<p>Upload your gpg key to a keyserver, preferrably <a href="https://keys.openpgp.org/"> this one</a></p>
+<p>Upload your gpg key to a keyserver, preferrably <a href="https://keys.openpgp.org/">this one</a></p>
+<code>gpg --export your_address@example.net | curl -T - https://keys.openpgp.org</code>
+<p>That will output a verification link, to verify your identity</p>
 
 <p>Then, either make a PR on the repository by adding your keyID and keyserver or simply provide it to me through PM</p>
-
 
 <p> All files that are uploaded must be digitally signed (see example below) </p>
 
