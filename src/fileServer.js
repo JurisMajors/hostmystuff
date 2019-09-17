@@ -4,16 +4,20 @@ const { exec } = require('child_process');
 const isText = (mimetype) => mimetype.startsWith("text");
 
 const writeWithHighlight = (res, data) => {
+    // mobile friendly viewport
+    res.write('<meta name="viewport" content="width=device-width, initial-scale=0.75">')
+    // prettyprint javascript
     res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
+
     res.write('<pre class="prettyprint">');
-
     res.write(data);
-
     res.write('</pre>');
+
+    res.write('</meta>');
 }
 
-const writeToHtml = (shouldHighlight, res, data, mimetype) => {
-    if (isText(mimetype) && shouldHighlight) {
+const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
+    if (isText(mimetype) && !shouldBeRaw) {
         writeWithHighlight(res, data);
     } else {
         res.write(data);
@@ -27,7 +31,7 @@ const serveFileToHtml = (filePath, req, res) => {
                 res.writeHead(404);
                 res.write("No such link exists");
             } else {
-                writeToHtml(!req.query.raw, res, data, stdout.split(": ")[1]);
+                writeToHtml(req.query.raw, res, data, stdout.split(": ")[1]);
             }
             res.end();
         });
