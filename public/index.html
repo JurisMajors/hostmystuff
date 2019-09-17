@@ -59,9 +59,34 @@ public class HelloWorld {
 
 <h2> Other information</h2>
 <p> Max file size is 512M </p>
-<p> Files get <b>deleted</b> after 24 hours! </p>
+<p> Files get <b>deleted</b> according to the same formula as 0x0.st.  </p>
+<pre>
+retention = min_age + (-max_age + min_age) * pow((file_size / max_size - 1), 3)
+
+   days
+    365 |  \
+        |   \
+        |    \
+        |     \
+        |      \
+        |       \
+        |        ..
+        |          \
+  197.5 | ----------..-------------------------------------------
+        |             ..
+        |               \
+        |                ..
+        |                  ...
+        |                     ..
+        |                       ...
+        |                          ....
+        |                              ......
+     30 |                                    ....................
+          0                        256                        512
+                                                              MiB 
 
     
+</pre>
 </main>
 
 </body>
