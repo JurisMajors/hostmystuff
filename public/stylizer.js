@@ -5,7 +5,7 @@ const getCookie = function(name) {
 
 const style = document.createElement('link');
 style.rel = "stylesheet";
-style.href = getCookie('styling') || "github.css";
+style.href = getCookie('styling') || "highlightStyles/github.css";
 
 document.head.appendChild(style);
 // add mobile friendly <meta> tag
@@ -22,15 +22,15 @@ const dropdown = document.createElement('select');
 dropdown.addEventListener("change", () => {
     const selected =dropdown.options[dropdown.selectedIndex].value; 
     style.href = selected;
-    document.cookie = `styling=${selected}`;
+    document.cookie = `styling=${selected}; expires=2147483647`;
 }); 
 
 function addStyle(text, csspath) {
     const syntaxStyle = document.createElement('option');
     syntaxStyle.text = text;
-    syntaxStyle.value = csspath;
+    syntaxStyle.value = `highlightStyles/${csspath}`;
 
-    if (getCookie('styling') === csspath) {
+    if (getCookie('styling') === syntaxStyle.value) {
         syntaxStyle.selected = "selected";
     } 
 
