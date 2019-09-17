@@ -11,7 +11,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
               - $SSHFINGERPRINT
-      -run:
+      - run:
         name: Build Docker container
         command: | 
             ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose --build"
