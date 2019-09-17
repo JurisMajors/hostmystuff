@@ -10,9 +10,9 @@ RUN mkdir -p ./src/
 RUN mkdir -p ./public/
 RUN mkdir -p ./scripts/
 
-COPY src/* ./src/
-COPY public/* ./public/
-COPY scripts/* ./scripts/
+COPY src ./src/
+COPY public ./public/
+COPY scripts ./scripts/
 
 # install dependencies
 RUN npm install
