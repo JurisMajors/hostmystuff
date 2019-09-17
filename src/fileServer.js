@@ -4,16 +4,10 @@ const { exec } = require('child_process');
 const isText = (mimetype) => mimetype.startsWith("text");
 
 const writeWithHighlight = (res, data) => {
-    // mobile friendly viewport
-    res.write('<meta name="viewport" content="width=device-width, initial-scale=0.75">')
-    // prettyprint javascript
-    res.write('<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>');
-
     res.write('<pre class="prettyprint">');
     res.write(data);
     res.write('</pre>');
-
-    res.write('</meta>');
+    res.write('<script src="stylizer.js"></script>');
 }
 
 const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
