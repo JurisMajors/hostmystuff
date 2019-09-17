@@ -22,7 +22,7 @@ const dropdown = document.createElement('select');
 dropdown.addEventListener("change", () => {
     const selected =dropdown.options[dropdown.selectedIndex].value; 
     style.href = selected;
-    document.cookie = `styling=${selected}; expires=2147483647`;
+    document.cookie = `styling=${selected}; max-age=2147483647`;
 }); 
 
 function addStyle(text, csspath) {
