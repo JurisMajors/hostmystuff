@@ -12,9 +12,9 @@ jobs:
           fingerprints:
               - $SSHFINGERPRINT
       - run:
-        name: Build Docker container
-        command: | 
-            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose --build"
+          name: Build Docker container
+          command: | 
+              ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose --build"
 
   deploy:
     machine:
