@@ -4,24 +4,38 @@
 #
 version: 2
 jobs:
+  build:
+    machine:
+      enabled: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+              - $SSHFINGERPRINT
+      -run:
+        name: Build Docker container
+        command: | 
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose --build"
+
   deploy:
     machine:
         enabled: true
-    working_directory: ~/hostmystuff
     steps:
       - add_ssh_keys:
           fingerprints:
               - $SSHFINGERPRINT
       - run:
-          name: Run HostMyStuff in Docker
+          name: Run the docker container
           command: | 
-            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose up --build -d"
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && docker-compose up -d"
 
 workflows:
   version: 2
-  deployment:
+  build_and_deploy:
       jobs:
+        - build
         - deploy:
+            requires:
+              - build
             filters:
                 branches:
                     only: master
