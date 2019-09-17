@@ -7,7 +7,9 @@ const initialize = require('./src/initializer.js');
 
 const app = express();
 const PORT = 8080;
-const CLEARING_AGE = 86400000;
+// times specified in ms
+const CLEARING_MAX_AGE = 86400000 * 7; // week
+const CLEARING_MIN_AGE = 86400000; // day
 const CLEARING_FREQUENCY = 30000000;
 const ADDRESS = '0.0.0.0';
 const FILE_DIR = path.join(__dirname, '/files/');
