@@ -12,13 +12,14 @@ const writeWithHighlight = (res, data) => {
     res.write('<script src="stylizer.js"></script>');
 }
 
-const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
+const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
     if (isText(mimetype) && !shouldBeRaw) {
         writeWithHighlight(res, data);
     } else {
         mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
         res.writeHead(200, {
-            'Content-Type': mimetype 
+            'Content-Type': mimetype,
+            'X-Accel-Redirect': filePath
         });
         res.write(data);
     }
@@ -31,7 +32,7 @@ const serveFileToHtml = (filePath, req, res) => {
                 res.writeHead(404);
                 res.write("No such link exists");
             } else {
-                writeToHtml(req.query.raw, res, data, stdout.split(": ")[1]);
+                writeToHtml(req.query.raw, res, data, stdout.split(": ")[1], filePath);
             }
             res.end();
         });
