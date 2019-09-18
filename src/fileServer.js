@@ -16,6 +16,10 @@ const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
     if (isText(mimetype) && !shouldBeRaw) {
         writeWithHighlight(res, data);
     } else {
+        mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
+        res.writeHead(200, {
+            'Content-Type': mimetype 
+        });
         res.write(data);
     }
 }
