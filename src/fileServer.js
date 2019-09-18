@@ -12,15 +12,19 @@ const writeWithHighlight = (res, data) => {
     res.write('<script src="stylizer.js"></script>');
 }
 
-const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
+const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
     if (isText(mimetype) && !shouldBeRaw) {
         writeWithHighlight(res, data);
     } else {
         mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
         res.writeHead(200, {
+<<<<<<< HEAD
             'Content-Type': mimetype,
             'Content-Length': fs.statSync(filePath).size,
             'X-Accel-Redirect': filePath
+=======
+            'Content-Type': mimetype 
+>>>>>>> parent of e5297af... Add X-Accel-Redirect to headers
         });
         res.write(data);
     }
@@ -33,7 +37,7 @@ const serveFileToHtml = (filePath, req, res) => {
                 res.writeHead(404);
                 res.write("No such link exists");
             } else {
-                writeToHtml(req.query.raw, res, data, stdout.split(": ")[1], filePath);
+                writeToHtml(req.query.raw, res, data, stdout.split(": ")[1]);
             }
             res.end();
         });
