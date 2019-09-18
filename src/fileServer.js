@@ -18,13 +18,8 @@ const writeToHtml = (shouldBeRaw, res, data, mimetype) => {
     } else {
         mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
         res.writeHead(200, {
-<<<<<<< HEAD
             'Content-Type': mimetype,
             'Content-Length': fs.statSync(filePath).size,
-            'X-Accel-Redirect': filePath
-=======
-            'Content-Type': mimetype 
->>>>>>> parent of e5297af... Add X-Accel-Redirect to headers
         });
         res.write(data);
     }
