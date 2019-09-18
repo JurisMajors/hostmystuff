@@ -3,20 +3,19 @@ const getCookie = function(name) {
   if (match) return match[2];
 }
 
+const prettifyStyle = document.createElement('link');
+prettifyStyle.rel = "stylesheet";
+prettifyStyle.href = "prettify.css"
 const style = document.createElement('link');
 style.rel = "stylesheet";
-style.href = getCookie('styling') || "highlightStyles/github.css";
+style.href = getCookie('styling') || 'highlightStyles/github.css';
 
+document.head.appendChild(prettifyStyle);
 document.head.appendChild(style);
 // add mobile friendly <meta> tag
 const metaViewport = document.createElement('meta');
 metaViewport.name = "viewport";
-metaViewport.content = "width=device-width, initial-scale=0.5";
-
-// prettify
-const codePrettify = document.createElement('script');
-codePrettify.src = 'https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js';
-metaViewport.appendChild(codePrettify);
+metaViewport.content = "width=device-width, initial-scale=0.65";
 
 const dropdown = document.createElement('select');
 dropdown.addEventListener("change", () => {
@@ -44,5 +43,6 @@ addStyle('doxy', 'doxy.css');
 addStyle('sunburst', 'sunburst.css');
 
 document.body.appendChild(metaViewport);
-
 document.body.insertBefore(dropdown, document.body.firstChild);
+// run pretty print after loading necessary things
+PR.prettyPrint();

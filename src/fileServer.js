@@ -4,9 +4,11 @@ const { exec } = require('child_process');
 const isText = (mimetype) => mimetype.startsWith("text");
 
 const writeWithHighlight = (res, data) => {
-    res.write('<pre class="prettyprint">');
+    res.write('<script src="prettify.js"></script>');
+    res.write('<pre class="prettyprint linenums:1" style="white-space: pre-wrap;">');
     res.write(data);
     res.write('</pre>');
+    res.write('<link rel="stylesheet" type="text/css" href="prettify.css">');
     res.write('<script src="stylizer.js"></script>');
 }
 
