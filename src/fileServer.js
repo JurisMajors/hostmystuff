@@ -19,6 +19,7 @@ const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
         mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
         res.writeHead(200, {
             'Content-Type': mimetype,
+            'Content-Length': fs.statSync(filePath).size,
             'X-Accel-Redirect': filePath
         });
         res.write(data);
