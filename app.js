@@ -19,7 +19,7 @@ app.use(express.static('public'));
 initialize(FILE_DIR);
 
 // periodically clear old files
-setInterval(() => clearOldFiles(FILE_DIR, CLEARING_AGE), CLEARING_FREQUENCY);
+setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE), CLEARING_FREQUENCY);
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
