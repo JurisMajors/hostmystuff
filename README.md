@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/JurisMajors/hostmystuff/tree/master.svg?style=svg)](https://circleci.com/gh/JurisMajors/hostmystuff/tree/master)
 
-[Hostmystuff](https://www.hostmystuff.ml/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
+[Hostmystuff](https://www.hostmystuff.xyz/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
 
 It supports syntax highlighting by using [code-prettify](https://github.com/google/code-prettify) and authentication is based through digitally signing the files that are uploaded.
 
