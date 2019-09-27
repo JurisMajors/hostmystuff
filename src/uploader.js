@@ -23,7 +23,7 @@ const decryptAndSaveFile = async (signatureFileName, FILE_DIR, res) => {
 
     await auth.decryptFile(path.join(FILE_DIR, signatureFileName),
                             path.join(FILE_DIR, decryptedFileName))
-        .then(filePath => res.end(`hostmystuff.xyz/${decryptedFileName}\n`))
+        .then(filePath => res.end(`https://hostmystuff.xyz/${decryptedFileName}\n`))
         .catch(err => {
             res.status('401');
             res.end(err);
