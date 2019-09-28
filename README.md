@@ -28,6 +28,7 @@ Each new key should be in a seperate line. If no keyserver is provided keys.open
 If you want to have access to hostmystuff, you must make a PR that adds your key or send the information to me as PM.
 
 # TODO
+Feedback and requested features are always welcome!
 
 # DONE
 - [x] CI/CD
