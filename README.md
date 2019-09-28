@@ -6,7 +6,7 @@
 
 [Hostmystuff](https://www.hostmystuff.xyz/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
 
-It supports syntax highlighting by using [code-prettify](https://github.com/google/code-prettify) and authentication is based through digitally signing the files that are uploaded.
+It supports syntax highlighting by using [highlight.js](https://highlightjs.org/) and authentication is based through digitally signing the files that are uploaded.
 
 The homepage contains more detailed information, including
 * How to upload
