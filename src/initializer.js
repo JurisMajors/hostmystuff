@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const gpg = require('gpg');
 
 const ensureFileDirectory = (FILE_DIR) => {
     fs.pathExists(FILE_DIR, (err, exists) => {
