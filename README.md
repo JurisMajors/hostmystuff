@@ -1,4 +1,7 @@
 [![CircleCI](https://circleci.com/gh/JurisMajors/hostmystuff/tree/master.svg?style=svg)](https://circleci.com/gh/JurisMajors/hostmystuff/tree/master)
+[![Known Vulnerabilities](https://snyk.io//test/github/JurisMajors/hostmystuff/badge.svg?targetFile=package.json)](https://snyk.io//test/github/JurisMajors/hostmystuff?targetFile=package.json)
+
+
 
 [Hostmystuff](https://www.hostmystuff.xyz/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
 
