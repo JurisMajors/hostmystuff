@@ -3,14 +3,10 @@ const getCookie = function(name) {
   if (match) return match[2];
 }
 
-const prettifyStyle = document.createElement('link');
-prettifyStyle.rel = "stylesheet";
-prettifyStyle.href = "prettify.css"
 const style = document.createElement('link');
 style.rel = "stylesheet";
-style.href = getCookie('styling') || 'highlightStyles/github.css';
+style.href = getCookie('styling') || 'styles/github.css';
 
-document.head.appendChild(prettifyStyle);
 document.head.appendChild(style);
 // add mobile friendly <meta> tag
 const metaViewport = document.createElement('meta');
@@ -27,7 +23,7 @@ dropdown.addEventListener("change", () => {
 function addStyle(text, csspath) {
     const syntaxStyle = document.createElement('option');
     syntaxStyle.text = text;
-    syntaxStyle.value = `highlightStyles/${csspath}`;
+    syntaxStyle.value = `styles/${csspath}`;
 
     if (getCookie('styling') === syntaxStyle.value) {
         syntaxStyle.selected = "selected";
@@ -36,13 +32,21 @@ function addStyle(text, csspath) {
     dropdown.appendChild(syntaxStyle);
 }
 // options for the dropdown
-addStyle('github', 'github.css');
-addStyle('desert', 'desert.css');
-addStyle('atelier cave light', 'atelier-cave-light.css');
-addStyle('doxy', 'doxy.css');
-addStyle('sunburst', 'sunburst.css');
+addStyle('Tomorrow Night', 'tomorrow-night.css');
+addStyle('GruvBox Dark', 'gruvbox-dark.css');
+addStyle('Solarized Dark', 'solarized-dark.css');
+addStyle('Atom One Dark', 'atom-one-dark-reasonable.css');
+addStyle('Visual Studio 2015', 'vs2015.css');
+addStyle('Monokai', 'monokai-sublime.css');
+addStyle('Qtcreator', 'qtcreator_dark.css');
+addStyle('xt 256', 'xt256.css');
+addStyle('Github', 'github.css');
+addStyle('Atelier Cave Light', 'atelier-cave-light.css');
+addStyle('GruvBox Light', 'gruvbox-light.css');
+addStyle('Atom One Light', 'atom-one-light.css');
+addStyle('Arduino Light', 'arduino-light.css');
+addStyle('Googlecode', 'googlecode.css');
+
 
 document.body.appendChild(metaViewport);
 document.body.insertBefore(dropdown, document.body.firstChild);
-// run pretty print after loading necessary things
-PR.prettyPrint();
