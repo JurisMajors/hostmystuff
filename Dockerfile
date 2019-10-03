@@ -17,7 +17,7 @@ COPY scripts ./scripts/
 # install dependencies
 RUN npm install
 
-# RUN cd scripts/ && ./addAuthorizedKeys.sh
+RUN cd scripts/ && ./addAuthorizedKeys.sh
 
 EXPOSE 8080
 
