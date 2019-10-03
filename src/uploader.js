@@ -25,10 +25,10 @@ const mimetypeBlacklist = [
     'application/vnd.android.package-archive'
 ]
 
-const createSignatureFileHash = (realName) => `${crypto.createHash("sha256")
+const createFileNameHash = (realName, extension) => `${crypto.createHash("sha256")
                                         .update(`${realName}${Date.now()}`)
                                         .digest("hex")
-                                        .substring(0, 7)}.gpg`;   
+                                        .substring(0, 7)}${(extension) ? extension : ""}`;   
 
 const decryptAndSaveFile = async (signatureFileName, FILE_DIR, res) => {
     const decryptedFileName = signatureFileName.replace('.gpg', '');
@@ -42,7 +42,7 @@ const decryptAndSaveFile = async (signatureFileName, FILE_DIR, res) => {
         });
 }
 
-function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
+function createBusboyFileHandler(requestHeaders, res, FILE_DIR, devMode) {
     const busboy = new Busboy({ headers: requestHeaders });
     let name;
 
@@ -52,7 +52,12 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
             res.end(`${mimetype} 403: Invalid mime-type thats located in the mimetype blacklist`);
         } 
         else {
-            name = createSignatureFileHash(filename);
+            if (devMode) {
+                name = createFileNameHash(filename);
+            } else {
+                name = createFileNameHash(filename,'.gpg');
+            }
+
             console.log(`name: ${name}`);
             console.log(`mimetype: ${mimetype}`);
             console.log('}')
@@ -64,10 +69,15 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
 
     busboy.on('finish', async () => {
         // TODO: HANDLE MIMETYPE BLACKLISTS HERE
-        // send location of file 
-        await decryptAndSaveFile(name, FILE_DIR, res);
-        // delete signature file
-        fs.unlinkSync(path.join(FILE_DIR, name))
+        if (!devMode) {
+            // send location of file 
+            await decryptAndSaveFile(name, FILE_DIR, res);
+            // delete signature file
+            fs.unlinkSync(path.join(FILE_DIR, name))
+        } else {
+            res.end(`localhost:8080/${name}\n`);
+        }
+
     });
 
     return busboy;

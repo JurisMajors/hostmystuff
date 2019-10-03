@@ -25,6 +25,11 @@ const CLEARING_MIN_AGE = 86400000; // day
 const CLEARING_FREQUENCY = 30000000;
 const ADDRESS = '0.0.0.0';
 const FILE_DIR = path.join(__dirname, '/files/');
+// whether to apply development mode
+const isDev = process.argv[2] && process.argv[2] == 'dev'
+if (isDev) {
+    console.log("Running in development mode")
+}
 
 app.use(express.static('public'));
 
@@ -41,7 +46,7 @@ app.get('/:hash', (req, res) => {
 
 // upload
 app.post('/', (req, res) => {
-    return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR));
+    return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
 });
 
 

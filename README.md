@@ -17,15 +17,37 @@ The homepage contains more detailed information, including
 
 # Running 
 Hostmystuff runs within docker/docker-compose, therefore make sure you have it installed.
+## Development mode
+Development mode is recommended since it disables the digital signature authentication.
+Make sure you have run `npm install` to install the dependencies.
+For development mode, there is a nodejs run-time argument `dev`.
 
+If want to run w/o docker, then `node app.js dev` 
+
+If want to run in docker, then first build the container `docker-compose build` and run it with `docker-compose -f dev-compose.yml up -d`.
+The `dev-compose.yml` specifies to run node in development mode.
+
+Both methods will serve the website on `localhost:8080` and you can use `scripts/test-dev-upload.sh` for file uploading.
+
+## Production mode
+If you are running without docker `node app.js`, then the authorized keys must be added to ur personal gpg key-ring.
+
+If running in docker then make sure, that you have defined an `scripts/authorizedKeys` file as discussed in Adding keys section.
 Running `docker-compose up --build -d` will build and serve the website on `localhost:8080`
 
-# Add keys
+# Adding keys
 
 In the `scripts/` directory, the file `authorizedKeys` defines all the gpg keyID's that are authorized to upload.
-
 Each new key should be in a seperate line. If no keyserver is provided keys.openpgp.org is used.
-If you want to have access to hostmystuff, you must make a PR that adds your key or send the information to me as PM.
+Example key file:
+```
+pubKeyID1
+pubKeyID2 somekeyserver.com
+```
+pubKeyID1 will be fetched from keys.openpgp.org and pubKeyID2 from somekeyserver.com
+
+If you want to have access to hostmystuff, you must provide me with the key information personally.
+Identities of these key owners must be verified.
 
 # TODO
 Feedback and requested features are always welcome!
