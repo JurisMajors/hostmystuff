@@ -12,10 +12,11 @@ jobs:
         - docker
       enabled: true
     steps:
+      - checkout
       - run:
           name: Build Docker container
           command: | 
-              docker-compose build
+              ls && docker-compose build
 
   deploy:
     machine:
