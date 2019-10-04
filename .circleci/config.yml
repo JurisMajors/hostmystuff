@@ -6,9 +6,6 @@ version: 2
 jobs:
   build:
     machine:
-      pre:
-        - curl -L https://github.com/docker/compose/releases/download/1.25.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-        - chmod +x /usr/local/bin/docker-compose
       services:
         - docker
       enabled: true
@@ -16,7 +13,10 @@ jobs:
       - checkout
       - run:
           name: Build Docker container
-          command: | 
+          command: |
+              curl -L https://github.com/docker/compose/releases/download/1.25.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+              chmod +x /usr/local/bin/docker-compose
+              docker-compose --version
               docker-compose build
 
   deploy:
