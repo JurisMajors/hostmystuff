@@ -15,7 +15,7 @@ jobs:
       - run:
           name: Build Docker container
           command: | 
-              docker-compose build"
+              docker-compose build
 
   deploy:
     machine:
