@@ -6,15 +6,16 @@ version: 2
 jobs:
   build:
     machine:
+      pre:
+        - pip install docker-compose
+      services:
+        - docker
       enabled: true
     steps:
-      - add_ssh_keys:
-          fingerprints:
-              - $SSHFINGERPRINT
       - run:
           name: Build Docker container
           command: | 
-              ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose build"
+              docker-compose build"
 
   deploy:
     machine:
@@ -26,7 +27,7 @@ jobs:
       - run:
           name: Run the docker container
           command: | 
-            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && docker-compose up -d"
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && docker-compose up --build -d"
 
 workflows:
   version: 2
