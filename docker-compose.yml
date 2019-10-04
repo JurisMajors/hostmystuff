@@ -1,5 +1,14 @@
 version: "3.7"
 services:
+  mongo:
+    image:
+      mongo
+    restart:
+      always
+    volumes:
+        - mongodb:/data/db
+    ports:
+      - "27017:27017"
   hostmystuff:
       restart: on-failure:5
       build:
@@ -9,3 +18,5 @@ services:
           - "8080:8080"
       volumes:
           - $PWD/files/:/usr/src/app/files
+volumes:
+  mongodb:
