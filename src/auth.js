@@ -27,9 +27,9 @@ function enoughCapacity(keyInfo, fileSize) {
 
 async function addFileToKey(apiKey, fileName, fileSize) {
     const result = await getKeyFromDB(apiKey);
-    result.files.push(fileName);
+    result.files.push( {name: fileName, size: fileSize});
 
-    getCollection("userKeys").update(
+    getCollection("userKeys").updateOne(
         { _id : apiKey },
         { $set :
             {
@@ -37,7 +37,7 @@ async function addFileToKey(apiKey, fileName, fileSize) {
                 capacityLeft : result.capacityLeft - fileSize
             }
         },
-        (err, res) => {
+        (err) => {
             if (err) throw err;
         }
     )

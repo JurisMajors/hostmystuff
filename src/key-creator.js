@@ -11,25 +11,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 
-const conn = require('./db-conn.js').dbConn;
+const db = require('./db-conn.js');
 const uuidv4 = require('uuid/v4');
 
 function createKey() {
     return { 
         _id : uuidv4(),
         files: [],
-        capacityLeft: "1073741824" 
+        capacityLeft: "1073741824" // 1gb
     };
 }
 
-conn((db) => {
-    const dbo = db.db("keys");
+db.connect("mongodb://localhost:27017/keys", (err) => {
+    if (err) throw err;
     const newKey = createKey();
-    dbo.collection("userKeys").insertOne(newKey, 
-        (err, res) => {
-            if (err) throw err;
-            console.log(`key added with id ${newKey._id}`);
-            db.close();
-        }
-    );
-})
+    db.get().db("keys").collection("userKeys")
+        .insertOne(newKey, 
+            (err) => {
+                if (err) throw err;
+                console.log(newKey._id);
+                db.close();
+            }
+        );
+});

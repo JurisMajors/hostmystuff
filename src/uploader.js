@@ -24,31 +24,47 @@ const createFileNameHash = (realName, extension) => `${crypto.createHash("sha256
 
 function createBusboyFileHandler(requestHeaders, res, FILE_DIR, devMode) {
     const busboy = new Busboy({ headers: requestHeaders });
-    let name;
-    let filePath;
+    let name, filePath;
+    let fileSize = 0;
 
-    busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
+    busboy.on('file' , (fieldname, file, filename, encoding, mimetype) => {
             name = createFileNameHash(filename);
             filePath = path.join(FILE_DIR, name);
-            file.pipe(fs.createWriteStream(filePath));
+            const writeStream = fs.createWriteStream(filePath);
+            //TODO: Any possible ways to not write to file for size checking of finish?
+            file.pipe(writeStream);
+            // TODO: NEED LESS HACKY BETTER SOLUTION FOR GETTING FILE SIZE
+            file.on('readable', () => {
+                let data;
+                while (data = file.read()) {
+                    fileSize += data.length; // count number of bytes
+                }
+            });
     });
 
     busboy.on('finish', () => {
-        const fileSize = fs.statSync(filePath).size;
         conn.validUpload(requestHeaders.key, fileSize)
             .then((uploadReport) => {
                 // check for validity and report accordingly
                 if (!uploadReport.keyExists) {
-                    res.end("Invalid api-key")
-                    fs.unlinkSync(filePath)
+                    fs.unlinkSync(filePath);
+                    res.end("Invalid api-key");
                 } else if (!uploadReport.enoughCapacity) {
-                    res.end("Not enough capacity left for this api-key")
-                    fs.unlinkSync(filePath)
+                    fs.unlinkSync(filePath);
+                    res.end("Not enough capacity left for this api-key");
                 } else {
                     // add info to database
-                    res.end("Success!");
                     conn.addFile(requestHeaders.key, name, fileSize);
+                    if (devMode) {
+                        res.end(`http://localhost:8080/${name}`);
+                    } else {
+                        res.end(`https://hostmystuff.xyz/${name}`);
+                    }
                 }
+            })
+            .catch((err) => {
+                res.end("Something went wrong processing ur request." +
+                `Please contact the host with the erorr message ${err}`);
             });
     });
 
