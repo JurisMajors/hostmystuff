@@ -16,7 +16,8 @@ const clearOldFiles = require('./src/clearer.js');
 const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
-
+const db = require('./src/db-conn.js');
+const connURL = "mongodb://localhost:27017/keys";
 const app = express();
 const PORT = 8080;
 // times specified in ms
@@ -49,7 +50,12 @@ app.post('/', (req, res) => {
     return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
 });
 
-
-app.listen(PORT, ADDRESS, function() {
-    console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
+db.connect(connURL, function (err) {
+    if (err) {
+        console.log('Unable to connect to MongoDB');
+    } else {
+        app.listen(PORT, ADDRESS, function() {
+            console.log(`Listening on port ${PORT} at address ${ADDRESS}`)
+        });
+    }
 });

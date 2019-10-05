@@ -11,7 +11,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 const fs = require('fs-extra');
-const conn = require('./db-conn.js')
 
 const ensureFileDirectory = (FILE_DIR) => {
     fs.pathExists(FILE_DIR, (err, exists) => {
@@ -32,7 +31,6 @@ const ensureFileDirectory = (FILE_DIR) => {
 const initialize = (FILE_DIR) => {
     // ensure directory for saving files exist
     ensureFileDirectory(FILE_DIR);
-    conn.initialConn();
 }
 
 module.exports = initialize;

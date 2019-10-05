@@ -1,94 +1,29 @@
-const client = require('mongodb').MongoClient;
-const connURL = "mongodb://localhost:27017/keys";
+let MongoClient = require('mongodb').MongoClient
 
-function establishConnection(callback) {
-    // TODO: error handling s.t. server doesn't crash..
-    client.connect(connURL,
-        { useNewUrlParser: true, useUnifiedTopology: true}, 
-        (err, db) => {
-            if (err) throw err;
-            callback(db);
-        }
-    );
+let state = {
+  db: null,
 }
 
-function initializeDB() {
-    establishConnection(
-        (db) => {
-            console.log("Connected to database");
-            const dbo = db.db("keys");
-            dbo.createCollection("userKeys", 
-                (err) => {
-                    if (err) throw err;
-                    console.log("Initialized the userKeys collection");
-                }
-            );
-            db.close();
-        }
-    );
+exports.connect = function(url, done) {
+  if (state.db) return done()
+
+  MongoClient.connect(url, function(err, db) {
+    if (err) return done(err)
+    state.db = db
+    done()
+  })
 }
 
-
-function existsAPIKey(uuid) {
-    if (getKeyFromDB(uuid)) {
-        return true;
-    }
-    return false;
+exports.get = function() {
+  return state.db
 }
 
-function getKeyFromDB(apiKey) {
-    let keyInfo;
-
-    establishConnection(
-        (db) => {
-            const keyCollection = db.db("keys").collection("userKeys");
-            keyCollection.find({_id : uuid}).toArray(
-                (err, items) => {
-                    console.log(keyInfo);
-                    keyInfo = items[0];
-                }
-            );
-        }
-    );
-    return keyInfo;
-}
-
-// assumes existsAPIKey(apiKey) == true
-function enoughCapacity(apiKey, fileSize) {
-    const keyInfo = getKeyFromDB(apiKey);
-    return keyInfo.capacityLeft - fileSize >= 0;
-}
-
-function addFileToKey(apiKey, fileName, fileSize) {
-    const keyInfo = getKeyFromDB(apiKey);
-    const curFiles = keyInfo.files;
-    const newCapacity = keyInfo.capacityLeft - fileSize;
-    curFiles.push(fileName);
-
-    establishConnection(
-        (db) => {
-            const keyCollection = db.db("keys").collection("userKeys");
-            keyCollection.update(
-                { _id : apiKey },
-                { $set : 
-                    {
-                        files : curFiles,
-                        capacityLeft : newCapacity 
-                    }
-                },
-                (err, res) => {
-                    if (err) throw err
-                }
-            )
-        }
-    );
-}
-
-function deleteFile(apiKey, fileName) {
-
-}
-
-module.exports = {
-    initialConn : initializeDB,
-    dbConn : establishConnection
+exports.close = function(done) {
+  if (state.db) {
+    state.db.close(function(err, result) {
+      state.db = null
+      state.mode = null
+      done(err)
+    })
+  }
 }
