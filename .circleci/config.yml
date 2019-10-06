@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Run the docker container
           command: |
-            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && docker-compose up --build -d"
+            ssh -p $SSHPORT $SSHUSER@$SSHHOST "cd ~/hostmystuff && git pull && docker-compose up --build -d"
 
 workflows:
   version: 2
