@@ -6,48 +6,39 @@
 
 [Hostmystuff](https://www.hostmystuff.xyz/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
 
-It supports syntax highlighting by using [highlight.js](https://highlightjs.org/) and authentication is based through digitally signing the files that are uploaded.
-
 The homepage contains more detailed information, including
 * How to upload
     * see `scripts/test-upload.sh`
     * Or also my [personal upload script](https://github.com/JurisMajors/dotfiles/blob/master/bin/upload)
-* Preferred ways to transfer gpg-keys
 * Enabling/disabling syntax highlighting
 
-# Running 
-Hostmystuff runs within docker/docker-compose, therefore make sure you have it installed.
-## Development mode
-Development mode is recommended since it disables the digital signature authentication.
-Make sure you have run `npm install` to install the dependencies.
-For development mode, there is a nodejs run-time argument `dev`.
+# Features
+- Syntax highlighting (see [highlight.js](https://highlightjs.org/))
+- API-key based authentication
+- Deleting files
+- Listing all information stored on database about your API-key
 
-If want to run w/o docker, then `node app.js dev` 
+# API Keys
+## How to get one?
+Contribute to the project or get in contact with me and I will provide you with a key.
+## Oops, my key is public!
+Keys are limited to have a total of 1GB capacity. So, I don't care if your key is public. However, if you do not want your capacity to run out because other people could be using it, ask me for a new one.
+# Running 
+HostMyStuff runs within docker/docker-compose, therefore make sure you have it installed.
+## Development mode
+Development mode disables API key checking and connection to MongoDB.
+Run `npm install` to install the dependencies.
+
+If want to run w/o docker, then `node app.js --mode=dev` 
 
 If want to run in docker, then first build the container `docker-compose build` and run it with `docker-compose -f dev-compose.yml up -d`.
-The `dev-compose.yml` specifies to run node in development mode.
+The `dev-compose.yml` specifies the development mode flag for run-time.
 
 Both methods will serve the website on `localhost:8080` and you can use `scripts/test-dev-upload.sh` for file uploading.
 
 ## Production mode
-If you are running without docker `node app.js`, then the authorized keys must be added to ur personal gpg key-ring.
-
-If running in docker then make sure, that you have defined an `scripts/authorizedKeys` file as discussed in Adding keys section.
-Running `docker-compose up --build -d` will build and serve the website on `localhost:8080`
-
-# Adding keys
-
-In the `scripts/` directory, the file `authorizedKeys` defines all the gpg keyID's that are authorized to upload.
-Each new key should be in a seperate line. If no keyserver is provided keys.openpgp.org is used.
-Example key file:
-```
-pubKeyID1
-pubKeyID2 somekeyserver.com
-```
-pubKeyID1 will be fetched from keys.openpgp.org and pubKeyID2 from somekeyserver.com
-
-If you want to have access to hostmystuff, you must provide me with the key information personally.
-Identities of these key owners must be verified.
+Running `docker-compose up --build -d` will build and serve the website on `localhost:8080` and database on `localhost:27017`.
+Adding new keys can be done by running `node ./src/key-creator.js`.
 
 # TODO
 Feedback and requested features are always welcome!
@@ -56,5 +47,7 @@ Feedback and requested features are always welcome!
 - [x] CI/CD
 - [x] Automatic gpg key addition from a file on deployment (need CI/CD first)
 - [x] Syntax highlighting
-- [x] Digital signature based authentication
+- [x] Digital signature based authentication (Deprecated)
 - [x] Dockerize
+- [x] API-Key-based authentication
+- [x] Delete or list info about the client

@@ -61,11 +61,20 @@ async function validUpload(apiKey, fileSize) {
     }
 }
 
-async function deleteFileFromDB(apiKey, fileName) {
-    const keyInfo = await getKeyFromDB(apiKey);
-    if (!keyInfo) {
-        throw 'Invalid API key';
-    }
+async function findOwner(fileName) {
+    let owner;
+    await getCollection("userKeys").find({}).toArray(function(err, keys) {
+        if (err) throw err;
+        
+        owner = keys.find((key)=> {
+            const fileNameInfo = keyOwnsFile(key, fileName);
+            return fileNameInfo.index !== -1;
+        })._id;
+    });
+    return owner;
+} 
+
+function keyOwnsFile(keyInfo, fileName) {
     const fileNameInfo = { index : -1 };
     for (let index in keyInfo.files) {
         if (keyInfo.files[index].name === fileName) {
@@ -74,6 +83,15 @@ async function deleteFileFromDB(apiKey, fileName) {
             break;
         }
     }
+    return fileNameInfo;
+}
+
+async function deleteFileFromDB(apiKey, fileName) {
+    const keyInfo = await getKeyFromDB(apiKey);
+    if (!keyInfo) {
+        throw 'Invalid API key';
+    }
+    const fileNameInfo = keyOwnsFile(keyInfo, fileName);
     if (fileNameInfo.index === -1) {
         throw 'This API Key does not own this file';
     }
@@ -85,7 +103,7 @@ async function deleteFileFromDB(apiKey, fileName) {
         { $set :
             {
                 files : keyInfo.files,
-                capacityLeft : keyInfo.capacityLeft + fileNameInfo.info.fileSize
+                capacityLeft : keyInfo.capacityLeft + fileNameInfo.info.size
             } 
         },
     );
@@ -143,6 +161,8 @@ module.exports = {
     validUpload : validUpload,
     addFile : addFileToKey,
     deleteFile : deleteFile,
+    findOwner : findOwner,
+    deleteFileFromDB : deleteFileFromDB,
     listFiles : listFiles,
     allInfo : allInfo
 };

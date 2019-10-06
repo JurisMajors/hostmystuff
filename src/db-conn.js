@@ -6,12 +6,16 @@ let state = {
 
 exports.connect = (url, done) => {
   if (state.db) return done();
-
-  MongoClient.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true },
+  MongoClient.connect(url,{ 
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoReconnect: true,
+    reconnectInterval: 500
+  },
       (err, db) => {
-      if (err) return done(err);
-      state.db = db;
-      done();
+        if (err) return done(err);
+        state.db = db;
+        done();
   });
 };
 

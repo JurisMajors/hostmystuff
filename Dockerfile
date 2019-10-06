@@ -17,8 +17,6 @@ COPY scripts ./scripts/
 # install dependencies
 RUN npm install
 
-RUN cd scripts/ && ./addAuthorizedKeys.sh
-
 EXPOSE 8080
 
-ENTRYPOINT [ "node", "app.js"]
+ENTRYPOINT [ "node", "app.js", "--address=0.0.0.0", "--port=8080", "--mongo=mongodb://mongo:27017/keys"]

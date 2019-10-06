@@ -6,9 +6,5 @@ else
     echo "Uploading $1"
     FILE="$1"
 fi
-TMPFILE='/tmp/test-upload.tmp';
-SIGNATURE=$(gpg --sign --output $TMPFILE $FILE);
-LINK=$(curl -F"file=@$TMPFILE" localhost:8080)
-$(rm $TMPFILE)
-
+LINK=$(curl --header "key: api-key" -F"file=@$FILE" https://hostmystuff.xyz/)
 echo "$LINK"
