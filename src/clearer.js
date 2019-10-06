@@ -17,10 +17,18 @@ const BYTES_IN_MIB = 1048576;
 const MAX_SIZE_IN_MIB = 512;
 
 
-const getClearingAge = (minAge, maxAge, sizeInBytes) => {
+function getClearingAge(minAge, maxAge, sizeInBytes) {
     const sizeInMiB = sizeInBytes / BYTES_IN_MIB;
     // see 0x0.st for this formula
-    return (minAge + (-maxAge + minAge) * Math.pow((sizeInMiB / MAX_SIZE_IN_MIB - 1), 3)) * 86400000
+    return (minAge + (-maxAge + minAge) * Math.pow((sizeInMiB / MAX_SIZE_IN_MIB - 1), 3)) * 86400000;
+}
+
+function isFileExpired(pathTo, CLEARING_MIN_AGE, CLEARING_MAX_AGE) {
+    const stats = fs.statSync(pathTo);
+    const aliveFor = Date.now() - stats.mtime;
+    const clearingAge = getClearingAge(CLEARING_MIN_AGE, CLEARING_MAX_AGE, stats.size);
+
+    return aliveFor >= clearingAge;
 }
 
 function clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE) {
@@ -34,13 +42,7 @@ function clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE) {
 
         files.forEach((file) => {
             const pathTo = path.join(FILE_DIR, file);
-            const stats = fs.statSync(pathTo);
-            const aliveFor = Date.now() - stats.mtime;
-
-            const clearingAge = getClearingAge(CLEARING_MIN_AGE, CLEARING_MAX_AGE,
-                                                                stats.size);
-
-            if (aliveFor >= clearingAge) { // delete if too old
+            if (isFileExpired(pathTo, CLEARING_MIN_AGE, CLEARING_MAX_AGE)) { // delete if too old
 		        count = count + 1;
                 fs.unlinkSync(pathTo);
             }

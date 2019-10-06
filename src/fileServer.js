@@ -24,7 +24,7 @@ const writeWithHighlight = (res, data) => {
     res.write('</code>');
     res.write('</pre>');
     res.write('<script src="stylizer.js"></script>');
-}
+};
 
 const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
     if (isText(mimetype) && !shouldBeRaw) {
@@ -37,7 +37,7 @@ const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
         });
         res.write(data);
     }
-}
+};
 
 const serveFileToHtml = (filePath, req, res) => {
     exec (`file --mime-type ${filePath}`, (err, stdout, stderr) => {
@@ -51,6 +51,6 @@ const serveFileToHtml = (filePath, req, res) => {
             res.end();
         });
     });
-}
+};
 
 module.exports = serveFileToHtml;

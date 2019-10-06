@@ -6,5 +6,5 @@ else
     echo "Uploading $1"
     FILE="$1"
 fi
-LINK=$(curl --header "key: f774c1e3-5044-4a4c-a049-c38f0e20e885" -F"file=@$FILE" localhost:8080)
+LINK=$(curl --header "key: 695b20fc-fdf2-455b-91e3-4e301617a6bf" -F"file=@$FILE" localhost:8080)
 echo "$LINK"

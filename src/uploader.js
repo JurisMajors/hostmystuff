@@ -31,7 +31,6 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR, devMode) {
             name = createFileNameHash(filename);
             filePath = path.join(FILE_DIR, name);
             const writeStream = fs.createWriteStream(filePath);
-            //TODO: Any possible ways to not write to file for size checking of finish?
             file.pipe(writeStream);
             // TODO: NEED LESS HACKY BETTER SOLUTION FOR GETTING FILE SIZE
             file.on('readable', () => {
