@@ -17,7 +17,7 @@ const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
 const db = require('./src/db-conn.js');
-const deleteOnRequest = require('./src/auth.js').deleteFile;
+const dbInteract = require('./src/auth.js');
 
 const connURL = "mongodb://localhost:27017/keys";
 const app = express();
@@ -42,8 +42,17 @@ initialize(FILE_DIR);
 setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE), CLEARING_FREQUENCY);
 
 app.delete('/:hash', (req, res) => {
-    deleteOnRequest(FILE_DIR, req.params.hash, req, res);
+    dbInteract.deleteFile(FILE_DIR, req.params.hash, req, res);
 });
+
+app.get('/allfiles', (req, res) => {
+    dbInteract.listFiles(req, res);
+});
+
+app.get('/allinfo', (req, res) => {
+    dbInteract.allInfo(req, res);
+});
+
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
@@ -56,12 +65,12 @@ app.post('/', (req, res) => {
     return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
 });
 
-db.connect(connURL, function (err) {
+db.connect(connURL, (err) => {
     if (err) {
         console.log('Unable to connect to MongoDB');
     } else {
-        app.listen(PORT, ADDRESS, function() {
-            console.log(`Listening on port ${PORT} at address ${ADDRESS}`)
+        app.listen(PORT, ADDRESS, () => {
+            console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
         });
     }
 });

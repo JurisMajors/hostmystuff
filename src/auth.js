@@ -95,7 +95,7 @@ function deleteFile(fileDir, fileName, req, res) {
     if (!req.headers.key) {
         res.status(401).end('No API Key provided');
     }
-    console.log(fileName);
+
     deleteFileFromDB(req.headers.key, fileName)
         .then(() => {
             fs.unlink(path.join(fileDir, fileName), (err) => {
@@ -109,12 +109,40 @@ function deleteFile(fileDir, fileName, req, res) {
         .catch((err) => res.status(401).end(err.toString()));
 }
 
-function listFiles(apiKey) {
-    // TODO
+async function listFiles(req, res) {
+    if (!req.headers.key) {
+        res.status(401).end('No API Key provided');
+    }
+    getKeyFromDB(req.headers.key)
+        .then((keyInfo) => {
+            if (!keyInfo) {
+                res.status(401).end('Invalid API key');
+            } else {
+                res.status(200).end(JSON.stringify(keyInfo.files));
+            }
+        })
+        .catch((err) => res.end(err.toString()));
+}
+
+async function allInfo(req, res) {
+    if (!req.headers.key) {
+        res.status(401).end('No API Key provided');
+    }
+    getKeyFromDB(req.headers.key)
+    .then((keyInfo) => {
+        if (!keyInfo) {
+            res.status(401).end('Invalid API key');
+        } else {
+            res.status(200).end(JSON.stringify(keyInfo));
+        }
+    })
+    .catch((err) => res.end(err.toString()));
 }
 
 module.exports = {
     validUpload : validUpload,
     addFile : addFileToKey,
-    deleteFile : deleteFile
+    deleteFile : deleteFile,
+    listFiles : listFiles,
+    allInfo : allInfo
 };
