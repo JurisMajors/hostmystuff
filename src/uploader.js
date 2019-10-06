@@ -27,7 +27,7 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR, devMode) {
     let name, filePath;
     let fileSize = 0;
 
-    busboy.on('file' , (fieldname, file, filename, encoding, mimetype) => {
+    busboy.on('file' , (fieldname, file, filename) => {
             name = createFileNameHash(filename);
             filePath = path.join(FILE_DIR, name);
             const writeStream = fs.createWriteStream(filePath);

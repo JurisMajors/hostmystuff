@@ -40,7 +40,7 @@ const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
 };
 
 const serveFileToHtml = (filePath, req, res) => {
-    exec (`file --mime-type ${filePath}`, (err, stdout, stderr) => {
+    exec (`file --mime-type ${filePath}`, (err, stdout) => {
         fs.readFile(filePath, null, (error, data) => {
             if (error) {
                 res.writeHead(404);
