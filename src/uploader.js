@@ -14,70 +14,57 @@ const Busboy = require('busboy');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs-extra');
-const auth = require('./authentication.js');
+const conn = require('./auth.js');
 
-const mimetypeBlacklist = [
-    'application/x-dosexec', 
-    'application/x-executable', 
-    'application/x-pie-executable', 
-    'application/x-sharedlib', 
-    'application/x-application', 
-    'application/vnd.android.package-archive'
-]
-
-const createFileNameHash = (realName, extension) => `${crypto.createHash("sha256")
+const createFileNameHash = (realName) => `${crypto.createHash("sha256")
                                         .update(`${realName}${Date.now()}`)
                                         .digest("hex")
-                                        .substring(0, 7)}${(extension) ? extension : ""}`;   
+                                        .substring(0, 7)}${path.extname(realName)}`;   
 
-const decryptAndSaveFile = async (signatureFileName, FILE_DIR, res) => {
-    const decryptedFileName = signatureFileName.replace('.gpg', '');
-
-    await auth.decryptFile(path.join(FILE_DIR, signatureFileName),
-                            path.join(FILE_DIR, decryptedFileName))
-        .then(filePath => res.end(`https://hostmystuff.xyz/${decryptedFileName}\n`))
-        .catch(err => {
-            res.status('401');
-            res.end(err);
-        });
-}
 
 function createBusboyFileHandler(requestHeaders, res, FILE_DIR, devMode) {
     const busboy = new Busboy({ headers: requestHeaders });
-    let name;
+    let name, filePath;
+    let fileSize = 0;
 
-    busboy.on('file' ,(fieldname, file, filename, encoding, mimetype) => {
-        if (mimetypeBlacklist.indexOf(mimetype) > -1) {
-            res.status('403');
-            res.end(`${mimetype} 403: Invalid mime-type thats located in the mimetype blacklist`);
-        } 
-        else {
-            if (devMode) {
-                name = createFileNameHash(filename);
-            } else {
-                name = createFileNameHash(filename,'.gpg');
-            }
-
-            console.log(`name: ${name}`);
-            console.log(`mimetype: ${mimetype}`);
-            console.log('}')
-
-            const savePath = path.join(FILE_DIR, name);
-            file.pipe(fs.createWriteStream(savePath));
-        }
+    busboy.on('file' , (fieldname, file, filename) => {
+            name = createFileNameHash(filename);
+            filePath = path.join(FILE_DIR, name);
+            const writeStream = fs.createWriteStream(filePath);
+            file.pipe(writeStream);
+            // TODO: NEED LESS HACKY  SOLUTION FOR GETTING FILE SIZE
+            file.on('readable', () => {
+                let data;
+                while (data = file.read()) {
+                    fileSize += data.length; // count number of bytes
+                }
+            });
     });
 
-    busboy.on('finish', async () => {
-        // TODO: HANDLE MIMETYPE BLACKLISTS HERE
-        if (!devMode) {
-            // send location of file 
-            await decryptAndSaveFile(name, FILE_DIR, res);
-            // delete signature file
-            fs.unlinkSync(path.join(FILE_DIR, name))
+    busboy.on('finish', () => {
+        if (devMode) { // check validity only on production mode
+            res.end(`http://localhost:8080/${name}`);
         } else {
-            res.end(`localhost:8080/${name}\n`);
+            conn.validUpload(requestHeaders.key, fileSize)
+                .then((uploadReport) => {
+                    // check for validity and report accordingly
+                    if (!uploadReport.keyExists) {
+                        fs.unlinkSync(filePath);
+                        res.end("Invalid api-key");
+                    } else if (!uploadReport.enoughCapacity) {
+                        fs.unlinkSync(filePath);
+                        res.end("Not enough capacity left for this api-key");
+                    } else {
+                        // add info to database
+                        conn.addFile(requestHeaders.key, name, fileSize);
+                        res.end(`https://hostmystuff.xyz/${name}`);
+                    }
+                })
+                .catch((err) => {
+                    res.end("Something went wrong processing your request." +
+                    `Please contact the host with the erorr message ${err}`);
+                });
         }
-
     });
 
     return busboy;

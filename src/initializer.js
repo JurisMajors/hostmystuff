@@ -26,11 +26,11 @@ const ensureFileDirectory = (FILE_DIR) => {
                 .catch(err => console.error(err));
         }
     });
-}
+};
 
 const initialize = (FILE_DIR) => {
     // ensure directory for saving files exist
     ensureFileDirectory(FILE_DIR);
-}
+};
 
 module.exports = initialize;

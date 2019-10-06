@@ -12,23 +12,30 @@ You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 const express = require('express');
 const path = require('path');
-const clearOldFiles = require('./src/clearer.js');
+const argv = require('minimist')(process.argv.slice(2));
+
+const clearOldFiles = require('./src/clearer.js').clearOldFiles;
 const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
+const db = require('./src/db-conn.js');
+const dbInteract = require('./src/auth.js');
 
 const app = express();
-const PORT = 8080;
+const PORT = argv.port || 8080;
+const ADDRESS = argv.address || '127.0.0.1';
+const connURL = argv.mongo || "mongodb://127.0.0.1:27017/keys";
+
+const DAY_IN_MS = 86400000;
 // times specified in ms
-const CLEARING_MAX_AGE = 86400000 * 7; // week
-const CLEARING_MIN_AGE = 86400000; // day
-const CLEARING_FREQUENCY = 30000000;
-const ADDRESS = '0.0.0.0';
+const CLEARING_MAX_AGE = DAY_IN_MS * 7; // week
+const CLEARING_MIN_AGE = DAY_IN_MS; // day
+const CLEARING_FREQUENCY = DAY_IN_MS / 3;
 const FILE_DIR = path.join(__dirname, '/files/');
 // whether to apply development mode
-const isDev = process.argv[2] && process.argv[2] == 'dev'
+const isDev = argv.mode && argv.mode === 'dev';
 if (isDev) {
-    console.log("Running in development mode")
+    console.log("Running in development mode");
 }
 
 app.use(express.static('public'));
@@ -36,7 +43,22 @@ app.use(express.static('public'));
 initialize(FILE_DIR);
 
 // periodically clear old files
-setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE), CLEARING_FREQUENCY);
+setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE, isDev), CLEARING_FREQUENCY);
+
+// delete file
+app.delete('/:hash', (req, res) => {
+    dbInteract.deleteFile(FILE_DIR, req.params.hash, req, res);
+});
+
+// get all owned files
+app.get('/allfiles', (req, res) => {
+    dbInteract.listFiles(req, res);
+});
+
+// get all information stored in db
+app.get('/allinfo', (req, res) => {
+    dbInteract.allInfo(req, res);
+});
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
@@ -49,7 +71,24 @@ app.post('/', (req, res) => {
     return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
 });
 
+function connect() {
+    if (isDev) {
+        app.listen(PORT, ADDRESS, () => {
+            console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
+        });
+    } else {
+        db.connect(connURL, (err) => {
+            if (err) {
+                console.log('Unable to connect to MongoDB');
+                console.log(err);
+                setTimeout(connect, 1000); // reconnect
+            } else {
+                app.listen(PORT, ADDRESS, () => {
+                    console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
+                });
+            }
+        });
+    }
+}
 
-app.listen(PORT, ADDRESS, function() {
-    console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
-});
+connect();

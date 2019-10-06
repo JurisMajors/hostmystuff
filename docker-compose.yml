@@ -1,11 +1,24 @@
 version: "3.7"
 services:
+  mongo:
+    image:
+      mongo
+    restart:
+      always
+    volumes:
+        - mongodb:/data/db
+    ports:
+      - "27017:27017"
   hostmystuff:
-      restart: on-failure:5
-      build:
-        context: .
-        dockerfile: Dockerfile
-      ports:
-          - "8080:8080"
-      volumes:
-          - $PWD/files/:/usr/src/app/files
+    restart: on-failure:5
+    depends_on:
+      - mongo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+        - "8080:8080"
+    volumes:
+        - $PWD/files/:/usr/src/app/files
+volumes:
+  mongodb:

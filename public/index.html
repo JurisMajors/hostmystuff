@@ -11,46 +11,48 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=0.75">
     <main>
-        <h1> Welcome to HostMyStuff</h1>
-            
-        Security vulnerabilities scanned by snyk:
+        <h1> Welcome to HostMyStuff!</h1>
 <a href="https://snyk.io//test/github/JurisMajors/hostmystuff?targetFile=package.json"><img src="https://snyk.io//test/github/JurisMajors/hostmystuff/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io//test/github/JurisMajors/hostmystuff?targetFile=package.json" style="max-width:100%;"></a>
+
+<p> HostMyStuff is a private paste bin which supports syntax highlighting (with automatic language detection) and server side file management</p>
 
 <p>See the source code and more information <a href="https://github.com/JurisMajors/hostmystuff">here.</a></p>
 
 <h2> Authentication </h2>
-<p> To use this service, your gpg public key must be part of my key-ring.</p>
-<h3> What? </h3>
-<p>Generate a gpg key if you don't have one already</p>
-<code> gpg --full-generate-key </code>
+<p> To use this service you must have an api-key</p>
 
-<p>Upload your gpg key to a keyserver, preferrably <a href="https://keys.openpgp.org/">this one</a></p>
-<code>gpg --export your_address@example.net | curl -T - https://keys.openpgp.org</code>
-<p>That will output a verification link, to verify your identity</p>
+<h3> How can I get one? </h3>
+<p> Ask me for one. </p>
 
-<p>Then, either make a PR on the repository by adding your keyID and keyserver or simply provide it to me through PM</p>
-
-<p> All files that are uploaded must be digitally signed (see example below) </p>
-
-<p> Example upload: 
-    <pre>
-    <code class="bash">
-    # create tmp file
-    TMPFILE='/tmp/hostmystuff.tmp';
-    # sign the file that you wish to upload 
-    SIGNATURE=$(gpg --sign --output $TMPFILE 'path-to-file');
-    # do the request
-    LINK=$(curl -F"file=@$TMPFILE" https://www.hostmystuff.ml)
-    # remove the tmp file
-    $(rm -f $TMPFILE)
-    # put the link to the file in stdout
-    echo "$LINK"
-    </code>
-    </pre>
+<h2> Request examples </h2>
+<p> Uploading: 
+<pre>
+<code class="bash">
+curl --header "key: api-key" -F"file=@fileName" https://hostmystuff.xyz/ 
+</code>
+</pre>
 </p>
-
-And yes.. sometimes when uploading you will be prompted for your passphrase, deal with it!
-
+<p> Deleting: 
+<pre>
+<code class="bash">
+curl --header "key: api-key" -X DELETE https://hostmystuff.xyz/fileName
+</code>
+</pre>
+</p>
+<p> Listing files attached to your key: 
+<pre>
+<code class="bash">
+curl --header "key: api-key" https://hostmystuff.xyz/allfiles 
+</code>
+</pre>
+</p>
+<p> Listing all info about you:
+<pre>
+<code class="bash">
+curl --header "key: api-key" https://hostmystuff.xyz/allinfo 
+</code>
+</pre>
+</p>
 
 <h2> Syntax highlighting </h2>
 
@@ -70,7 +72,7 @@ public class HelloWorld {
 
 <h2> Other information</h2>
 <p> Max file size is 512M </p>
-<p> Files get <b>deleted</b> according to the same formula as 0x0.st.  </p>
+<p> Files get <b>deleted</b> according to the same formula as <a href="https://0x0.st/">0x0</a> </p>
 <p>retention = min_age + (-max_age + min_age) * pow((file_size / max_size - 1), 3)</p>
 <pre>
 

@@ -1,12 +1,14 @@
 version: "3.7"
 services:
   hostmystuff:
-      restart: on-failure:5
-      build:
-        context: .
-        dockerfile: Dockerfile
-      command: dev
-      ports:
-          - "8080:8080"
-      volumes:
-          - $PWD/files/:/usr/src/app/files
+    restart: on-failure:5
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: --mode=dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - $PWD/files/:/usr/src/app/files
+volumes:
+  mongodb:
