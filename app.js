@@ -12,11 +12,13 @@ You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 const express = require('express');
 const path = require('path');
-const clearOldFiles = require('./src/clearer.js');
+const clearOldFiles = require('./src/clearer.js').clearOldFiles;
 const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
 const db = require('./src/db-conn.js');
+const deleteOnRequest = require('./src/auth.js').deleteFile;
+
 const connURL = "mongodb://localhost:27017/keys";
 const app = express();
 const PORT = 8080;
@@ -27,9 +29,9 @@ const CLEARING_FREQUENCY = 30000000;
 const ADDRESS = '0.0.0.0';
 const FILE_DIR = path.join(__dirname, '/files/');
 // whether to apply development mode
-const isDev = process.argv[2] && process.argv[2] == 'dev'
+const isDev = process.argv[2] && process.argv[2] == 'dev';
 if (isDev) {
-    console.log("Running in development mode")
+    console.log("Running in development mode");
 }
 
 app.use(express.static('public'));
@@ -38,6 +40,10 @@ initialize(FILE_DIR);
 
 // periodically clear old files
 setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE), CLEARING_FREQUENCY);
+
+app.delete('/:hash', (req, res) => {
+    deleteOnRequest(FILE_DIR, req.params.hash, req, res);
+});
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
