@@ -20,22 +20,24 @@ const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
 const db = require('./src/db-conn.js');
 const dbInteract = require('./src/auth.js');
+const constants = require('./constants/index');
 
 const app = express();
 const PORT = argv.port || 8080;
-const ADDRESS = argv.address || '127.0.0.1';
-const connURL = argv.mongo || "mongodb://127.0.0.1:27017/keys";
+const ADDRESS = argv.address || constants.ADDRESS;
+const connURL = argv.mongo || constants.MONGO_URI_LOCAL;
 
-const DAY_IN_MS = 86400000;
+//const DAY_IN_MS = constants.DAY_IN_MS;
 // times specified in ms
-const CLEARING_MAX_AGE = DAY_IN_MS * 7; // week
-const CLEARING_MIN_AGE = DAY_IN_MS; // day
-const CLEARING_FREQUENCY = DAY_IN_MS / 3;
-const FILE_DIR = path.join(__dirname, '/files/');
+const CLEARING_MAX_AGE = constants.CLEARING_MAX_AGE; // week
+const CLEARING_MIN_AGE = constants.CLEARING_MIN_AGE; // day
+const CLEARING_FREQUENCY = constants.CLEARING_FREQUENCY;
+const FILE_DIR = constants.FILE_DIR;
+
 // whether to apply development mode
 const isDev = argv.mode && argv.mode === 'dev';
 if (isDev) {
-    console.log("Running in development mode");
+  console.log("Running in development mode");
 }
 
 app.use(express.static('public'));
@@ -47,48 +49,48 @@ setInterval(() => clearOldFiles(FILE_DIR, CLEARING_MIN_AGE, CLEARING_MAX_AGE, is
 
 // delete file
 app.delete('/:hash', (req, res) => {
-    dbInteract.deleteFile(FILE_DIR, req.params.hash, req, res);
+  dbInteract.deleteFile(FILE_DIR, req.params.hash, req, res);
 });
 
 // get all owned files
 app.get('/allfiles', (req, res) => {
-    dbInteract.listFiles(req, res);
+  dbInteract.listFiles(req, res);
 });
 
 // get all information stored in db
 app.get('/allinfo', (req, res) => {
-    dbInteract.allInfo(req, res);
+  dbInteract.allInfo(req, res);
 });
 
 // get uploaded file
 app.get('/:hash', (req, res) => {
-    const filePath = path.join(FILE_DIR, req.params.hash);
-    serveFileToHtml(filePath, req, res);
+  const filePath = path.join(FILE_DIR, req.params.hash);
+  serveFileToHtml(filePath, req, res);
 });
 
 // upload
 app.post('/', (req, res) => {
-    return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
+  return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
 });
 
 function connect() {
-    if (isDev) {
+  if (isDev) {
+    app.listen(PORT, ADDRESS, () => {
+      console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
+    });
+  } else {
+    db.connect(connURL, (err) => {
+      if (err) {
+        console.log('Unable to connect to MongoDB');
+        console.log(err);
+        setTimeout(connect, 1000); // reconnect
+      } else {
         app.listen(PORT, ADDRESS, () => {
-            console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
+          console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
         });
-    } else {
-        db.connect(connURL, (err) => {
-            if (err) {
-                console.log('Unable to connect to MongoDB');
-                console.log(err);
-                setTimeout(connect, 1000); // reconnect
-            } else {
-                app.listen(PORT, ADDRESS, () => {
-                    console.log(`Listening on port ${PORT} at address ${ADDRESS}`);
-                });
-            }
-        });
-    }
+      }
+    });
+  }
 }
 
 connect();

@@ -14,9 +14,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const findOwner = require('./auth.js').findOwner;
 const deleteFileFromDB = require('./auth.js').deleteFileFromDB;
+const constants = require('../constants/index');
 
-const BYTES_IN_MIB = 1048576;
-const MAX_SIZE_IN_MIB = 512;
+const BYTES_IN_MIB = constants.BYTES_IN_MIB;
+const MAX_SIZE_IN_MIB = constants.MAX_SIZE_IN_MIB;
 
 function getClearingAge(minAge, maxAge, sizeInBytes) {
     const sizeInMiB = sizeInBytes / BYTES_IN_MIB;
