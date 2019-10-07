@@ -29,9 +29,9 @@ const connURL = argv.mongo || constants.URI;
 
 const DAY_IN_MS = constants.DAY_IN_MS;
 // times specified in ms
-const CLEARING_MAX_AGE = constants.CLEARING_MAX_AGE; // week
-const CLEARING_MIN_AGE = constants.CLEARING_MIN_AGE; // day
-const CLEARING_FREQUENCY = constants.CLEARING_FREQUENCY;
+const CLEARING_MAX_AGE = DAY_IN_MS * constants.WEEK; // week
+const CLEARING_MIN_AGE = DAY_IN_MS; // day
+const CLEARING_FREQUENCY = DAY_IN_MS / constants.FREQUENCY;
 const FILE_DIR = path.join(__dirname, '/files/');
 // whether to apply development mode
 const isDev = argv.mode && argv.mode === 'dev';
