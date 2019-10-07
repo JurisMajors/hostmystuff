@@ -23,16 +23,17 @@ const dbInteract = require('./src/auth.js');
 const constants = require('./constants/index');
 
 const app = express();
-const PORT = argv.port || constants.PORT;
+const PORT = argv.port || 8080;
 const ADDRESS = argv.address || constants.ADDRESS;
-const connURL = argv.mongo || constants.URI;
+const connURL = argv.mongo || constants.MONGO_URI_LOCAL;
 
-const DAY_IN_MS = constants.DAY_IN_MS;
+//const DAY_IN_MS = constants.DAY_IN_MS;
 // times specified in ms
-const CLEARING_MAX_AGE = DAY_IN_MS * constants.WEEK; // week
-const CLEARING_MIN_AGE = DAY_IN_MS; // day
-const CLEARING_FREQUENCY = DAY_IN_MS / constants.FREQUENCY;
-const FILE_DIR = path.join(__dirname, '/files/');
+const CLEARING_MAX_AGE = constants.CLEARING_MAX_AGE; // week
+const CLEARING_MIN_AGE = constants.CLEARING_MIN_AGE; // day
+const CLEARING_FREQUENCY = constants.CLEARING_FREQUENCY;
+const FILE_DIR = constants.FILE_DIR;
+
 // whether to apply development mode
 const isDev = argv.mode && argv.mode === 'dev';
 if (isDev) {
