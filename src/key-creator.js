@@ -13,7 +13,6 @@ along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 
 const db = require('./db-conn.js');
 const uuidv4 = require('uuid/v4');
-const argv = require('minimist')(process.argv.slice(2));
 const constants = require('../constants/index');
 
 function createKey() {
@@ -24,8 +23,7 @@ function createKey() {
     };
 }
 
-const MONGO_URI = argv.mongo || constants.MONGO_URI_LOCAL;
-db.connect(MONGO_URI, (err) => {
+db.connect(constants.MONGO_URI_LOCAL, (err) => {
     if (err) throw err;
     const newKey = createKey();
     db.get().db("keys").collection("userKeys")
