@@ -14,7 +14,7 @@ const express = require('express');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const clearOldFiles = require('./src/clearer.js').clearOldFiles;
+const clearOldFiles = require('./src/clearer.js');
 const createBusboyFileHandler = require('./src/uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
