@@ -6,9 +6,9 @@ services:
     restart:
       always
     volumes:
-        - mongodb:/data/db
+      - mongodb:/data/db
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
   hostmystuff:
     restart: on-failure:5
     depends_on:
@@ -17,8 +17,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-        - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
-        - $PWD/files/:/usr/src/app/files
+      - $PWD/files/:/usr/src/app/files
 volumes:
   mongodb:
