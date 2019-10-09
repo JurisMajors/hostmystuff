@@ -43,7 +43,7 @@ Adding new keys can be done by running `node ./src/key-creator.js`.
 
 # TODO
 Feedback and requested features are always welcome!
-
+- [] CLI App for file management
 # DONE
 - [x] CI/CD
 - [x] Automatic gpg key addition from a file on deployment (need CI/CD first)
