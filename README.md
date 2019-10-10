@@ -19,6 +19,15 @@ The homepage contains more detailed information, including
 - Deleting files
 - Listing all information stored on database about your API-key
 
+# Using
+First get a hold of an api-key to use the service (see below).
+See file `clients/hostmystuff` for a simple client written in bash for interacting with files.
+This client allows you to delete or upload files, upload input from stdin and list information regarding your api-key in hostmystuff database.
+
+Make sure that you implemenet get_key to work for your particular system.
+
+See `-h` for all available options and information.
+
 # API Keys
 ## How to get one?
 Contribute to the project or get in contact with me and I will provide you with a key.
