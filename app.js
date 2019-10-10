@@ -16,6 +16,7 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const clearOldFiles = require('./src/clearer.js');
 const createBusboyFileHandler = require('./src/uploader.js');
+const createBusboyFileHandlerDev = require('./src/dev-uploader.js');
 const serveFileToHtml = require('./src/fileServer.js');
 const initialize = require('./src/initializer.js');
 const db = require('./src/db-conn.js');
@@ -70,7 +71,9 @@ app.get('/:hash', (req, res) => {
 
 // upload
 app.post('/', (req, res) => {
-  return req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR, isDev));
+  return isDev
+    ? req.pipe(createBusboyFileHandlerDev(req.headers, res, FILE_DIR))
+    : req.pipe(createBusboyFileHandler(req.headers, res, FILE_DIR));
 });
 
 function connect() {
