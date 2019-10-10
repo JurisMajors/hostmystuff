@@ -14,7 +14,8 @@ The homepage contains more detailed information, including
 * Enabling/disabling syntax highlighting
 
 # Features
-- Syntax highlighting (see [highlight.js](https://highlightjs.org/))
+- Syntax highlighting with automatic language detection (see [highlight.js](https://highlightjs.org/))
+![Syntax Highlight](./img/syntaxHighlightExample.gif)
 - API-key based authentication
 - Deleting files
 - Listing all information stored on database about your API-key
@@ -52,7 +53,8 @@ Adding new keys can be done by running `node ./src/key-creator.js`.
 
 # TODO
 Feedback and requested features are always welcome!
-- [] CLI App for file management
+
+- [ ] CLI App for file management
 # DONE
 - [x] CI/CD
 - [x] Automatic gpg key addition from a file on deployment (need CI/CD first)
