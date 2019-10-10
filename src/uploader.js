@@ -10,16 +10,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
-const Busboy = require('busboy');
-const crypto = require('crypto');
-const path = require('path');
-const fs = require('fs-extra');
-const conn = require('./auth.js');
+const Busboy = require("busboy");
+const crypto = require("crypto");
+const path = require("path");
+const fs = require("fs-extra");
+const conn = require("./auth.js");
 
 const createFileNameHash = (realName) => `${crypto.createHash("sha256")
-                                        .update(`${realName}${Date.now()}`)
-                                        .digest("hex")
-                                        .substring(0, 7)}${path.extname(realName)}`;   
+    .update(`${realName}${Date.now()}`)
+    .digest("hex")
+    .substring(0, 7)}${path.extname(realName)}`;   
 
 
 function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
@@ -27,21 +27,21 @@ function createBusboyFileHandler(requestHeaders, res, FILE_DIR) {
     let name, filePath;
     let fileSize = 0;
 
-    busboy.on('file' , (fieldname, file, filename) => {
-            name = createFileNameHash(filename);
-            filePath = path.join(FILE_DIR, name);
-            const writeStream = fs.createWriteStream(filePath);
-            file.pipe(writeStream);
-            // TODO: NEED LESS HACKY  SOLUTION FOR GETTING FILE SIZE
-            file.on('readable', () => {
-                let data;
-                while (data = file.read()) {
-                    fileSize += data.length; // count number of bytes
-                }
-            });
+    busboy.on("file" , (fieldname, file, filename) => {
+        name = createFileNameHash(filename);
+        filePath = path.join(FILE_DIR, name);
+        const writeStream = fs.createWriteStream(filePath);
+        file.pipe(writeStream);
+        // TODO: NEED LESS HACKY  SOLUTION FOR GETTING FILE SIZE
+        file.on("readable", () => {
+            let data = file.read();
+            while (data) {
+                fileSize += data.length; // count number of bytes
+                data = file.read();
+            }
+        });
     });
-
-    busboy.on('finish', () => {       
+    busboy.on("finish", () => {       
         conn.validUpload(requestHeaders.key, fileSize)
             .then((uploadReport) => {
                 // check for validity and report accordingly
