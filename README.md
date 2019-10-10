@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/JurisMajors/hostmystuff.svg?style=shield)](https://circleci.com/gh/JurisMajors/hostmystuff)
 [![Known Vulnerabilities](https://snyk.io//test/github/JurisMajors/hostmystuff/badge.svg?targetFile=package.json)](https://snyk.io//test/github/JurisMajors/hostmystuff?targetFile=package.json)
 [![CodeFactor](https://www.codefactor.io/repository/github/jurismajors/hostmystuff/badge)](https://www.codefactor.io/repository/github/jurismajors/hostmystuff)
-[![DeepScan grade](https://deepscan.io/api/teams/5550/projects/7391/branches/73694/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5550&pid=7391&bid=73694)
+[![DeepScan grade](https://deepscan.io/api/teams/5550/projects/7391/branches/73694/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5550&pid=7391&bid=73694) [![Greenkeeper badge](https://badges.greenkeeper.io/JurisMajors/hostmystuff.svg)](https://greenkeeper.io/)
 
 
 
