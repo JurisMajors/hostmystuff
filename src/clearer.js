@@ -10,11 +10,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
-const fs = require('fs-extra');
-const path = require('path');
-const findOwner = require('./auth.js').findOwner;
-const deleteFileFromDB = require('./auth.js').deleteFileFromDB;
-const constants = require('../constants/index');
+const fs = require("fs-extra");
+const path = require("path");
+const findOwner = require("./auth.js").findOwner;
+const deleteFileFromDB = require("./auth.js").deleteFileFromDB;
+const constants = require("../constants/index");
 
 const BYTES_IN_MIB = constants.BYTES_IN_MIB;
 const MAX_SIZE_IN_MIB = constants.MAX_SIZE_IN_MIB;

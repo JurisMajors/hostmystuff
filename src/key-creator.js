@@ -11,9 +11,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 
-const db = require('./db-conn.js');
-const uuidv4 = require('uuid/v4');
-const constants = require('../constants/index');
+const db = require("./db-conn.js");
+const uuidv4 = require("uuid/v4");
+const constants = require("../constants/index");
 
 function createKey() {
     return { 

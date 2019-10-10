@@ -10,7 +10,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
-const fs = require('fs-extra');
+const fs = require("fs-extra");
 
 const ensureFileDirectory = (FILE_DIR) => {
     fs.pathExists(FILE_DIR, (err, exists) => {
