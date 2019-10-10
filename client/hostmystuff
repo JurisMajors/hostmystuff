@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+me=${0##*/}
+host=https://hostmystuff.xyz
+keypath=$HOME/bin/hostmystuffkey
+
+get_key() {
+    echo "$(cat $keypath)"
+}
+
+help() {
+    cat >&2 <<EOF
+Usage: ${me} [-f <file>] [-s <url>] [-u <url>] [file]
+Make sure get_key is correctly implemented for your setup
+Client for interacting with hostmystuff.xyz
+If no file is given, upload stdin.
+    -f <file>       - upload <file>
+    -d <filename>   - delete <file>
+    --allinfo       - fetches all info stored about your api key from HostMyStuff 
+    --allfiles      - fetches all your uploaded filenames an filesizes
+EOF
+}
+
+clip() {
+    if command -v xclip >/dev/null 2>&1;then
+        echo "$@" | xclip -selection c
+        notify-send "HostMyStuff" "URL: $@"
+    fi
+}
+
+file_upload() {
+    file="$1"
+    key=$(get_key)
+    url=$(curl --header "key: ${key}" -F "file=@${file}" "${host}")
+    printf '%s' "${url}"
+    [ -t 1 ] && printf '\n'
+    clip "${url}"
+}
+
+file_delete() {
+    file="$1"
+    key=$(get_key)
+    url=$(curl --header "key: ${key}" -X DELETE "${host}/${file}")
+    notify-send "HostMyStuff" "$file deleted"
+}
+
+all_info() {
+    key=$(get_key)
+    echo "$(curl --header "key: ${key}" "${host}/allinfo")"
+}
+
+all_files() {
+    key=$(get_key)
+    echo "$(curl --header "key: ${key}" "${host}/allfiles")"
+}
+
+
+
+if [[ -f "$1" || "$#" -lt 1 ]];then
+    mode="default"
+else
+    mode="$1"
+    shift
+fi
+
+case "$mode" in
+    default)
+        if [[ "$#" -gt 0 ]];then
+            file_upload "${@}"
+        else
+            cat | file_upload "/dev/stdin"
+        fi
+    ;;
+    -f)
+        file_upload "${@}"
+    ;;
+    -d)
+        file_delete "${@}"
+    ;;
+    --allinfo)
+        all_info
+    ;;
+    --allfiles)
+        all_files
+    ;;
+    -h|--help)
+        help
+    ;;
+esac
+
