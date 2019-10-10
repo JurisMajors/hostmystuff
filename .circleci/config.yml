@@ -5,15 +5,20 @@
 version: 2
 jobs:
   lint:
-    machine:
-      enabled: true
+    working_directory: ~/hostmystuff
+    docker:
+      - image: circleci/node:12.9.1
     steps:
       - checkout
       - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@5'
+      - run:
+          name: install packages
+          command: 'npm install'
+      - run:
           name: Apply ESLint
-          command: |
-            npm install
-            ./node_modules/.bin/eslint ./src/*.js ./app.js constants/* public/stylizer.js
+          command: './node_modules/.bin/eslint ./src/*.js ./app.js constants/* public/stylizer.js'
   build:
     machine:
       services:
