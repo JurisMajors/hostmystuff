@@ -18,6 +18,7 @@ const isText = (mimetype) => mimetype.startsWith("text");
 const writeWithHighlight = (res, data) => {
     res.write("<script src=\"highlight.pack.js\"></script>");
     res.write("<script>hljs.initHighlightingOnLoad();</script>");
+    res.write("<div id=\"selector\"></div>");
     res.write("<pre>");
     res.write("<code>");
     res.write(data);

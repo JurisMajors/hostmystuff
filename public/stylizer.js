@@ -20,7 +20,9 @@ const style = document.createElement("link");
 style.rel = "stylesheet";
 style.href = getCookie("styling") || "styles/github.css";
 
-document.head.appendChild(style);
+//Selector goes into <div id="selector"></div>
+const selector = document.getElementById("selector");
+selector.appendChild(style);
 // add mobile friendly <meta> tag
 const metaViewport = document.createElement("meta");
 metaViewport.name = "viewport";
@@ -61,5 +63,5 @@ addStyle("Arduino Light", "arduino-light.css");
 addStyle("Googlecode", "googlecode.css");
 
 
-document.body.appendChild(metaViewport);
-document.body.insertBefore(dropdown, document.body.firstChild);
+selector.appendChild(metaViewport);
+selector.insertBefore(dropdown, selector.firstChild);
