@@ -41,6 +41,7 @@ Development mode disables API key checking and connection to MongoDB.
 Run `npm install` to install the dependencies.
 
 If want to run w/o docker, then `node app.js --mode=dev` 
+See `--help` for usage of additional options.
 
 If want to run in docker, then first build the container `docker-compose build` and run it with `docker-compose -f dev-compose.yml up -d`.
 The `dev-compose.yml` specifies the development mode flag for run-time.
