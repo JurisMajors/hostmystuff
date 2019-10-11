@@ -34,6 +34,19 @@ const CLEARING_MIN_AGE = constants.CLEARING_MIN_AGE; // day
 const CLEARING_FREQUENCY = constants.CLEARING_FREQUENCY;
 const FILE_DIR = constants.FILE_DIR;
 
+
+//Display help message
+if(argv.help){
+    console.log("Usage: node app.js [options]\n");
+    console.log("Options:\n");
+    console.log("  --mode dev\t\tenable developer mode");
+    console.log("  --mongo\t\turl of mongo database to connect to");
+    console.log("  --address\t\tip address to run on, defaults to 'localhost'");
+    console.log("  --port\t\tport to run on, defaults to '8080'");
+    console.log("  --help\t\tdisplay this help and exit");
+    process.exit(0);
+}
+
 // whether to apply development mode
 const isDev = argv.mode && argv.mode === "dev";
 if (isDev) {
