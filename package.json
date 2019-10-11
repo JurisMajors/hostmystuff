@@ -25,5 +25,8 @@
     "mongodb": "^3.3.2",
     "path": "^0.12.7",
     "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1"
   }
 }

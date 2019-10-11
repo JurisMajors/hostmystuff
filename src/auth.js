@@ -11,9 +11,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with HostMyStuff.  If not, see <https://www.gnu.org/licenses/>. */
 
-const db = require('./db-conn.js');
-const path = require('path');
-const fs = require('fs-extra');
+const db = require("./db-conn.js");
+const path = require("path");
+const fs = require("fs-extra");
 
 function getCollection(name) {
     return db.get().db("keys").collection(name);
@@ -89,11 +89,11 @@ function keyOwnsFile(keyInfo, fileName) {
 async function deleteFileFromDB(apiKey, fileName) {
     const keyInfo = await getKeyFromDB(apiKey);
     if (!keyInfo) {
-        throw 'Invalid API key';
+        throw "Invalid API key";
     }
     const fileNameInfo = keyOwnsFile(keyInfo, fileName);
     if (fileNameInfo.index === -1) {
-        throw 'This API Key does not own this file';
+        throw "This API Key does not own this file";
     }
 
     keyInfo.files.splice(fileNameInfo.index, 1);
@@ -111,7 +111,7 @@ async function deleteFileFromDB(apiKey, fileName) {
 
 function deleteFile(fileDir, fileName, req, res) {
     if (!req.headers.key) {
-        res.status(401).end('No API Key provided');
+        res.status(401).end("No API Key provided");
     }
 
     deleteFileFromDB(req.headers.key, fileName)
@@ -129,12 +129,12 @@ function deleteFile(fileDir, fileName, req, res) {
 
 async function listFiles(req, res) {
     if (!req.headers.key) {
-        res.status(401).end('No API Key provided');
+        res.status(401).end("No API Key provided");
     }
     getKeyFromDB(req.headers.key)
         .then((keyInfo) => {
             if (!keyInfo) {
-                res.status(401).end('Invalid API key');
+                res.status(401).end("Invalid API key");
             } else {
                 res.status(200).end(JSON.stringify(keyInfo.files));
             }
@@ -144,17 +144,17 @@ async function listFiles(req, res) {
 
 async function allInfo(req, res) {
     if (!req.headers.key) {
-        res.status(401).end('No API Key provided');
+        res.status(401).end("No API Key provided");
     }
     getKeyFromDB(req.headers.key)
-    .then((keyInfo) => {
-        if (!keyInfo) {
-            res.status(401).end('Invalid API key');
-        } else {
-            res.status(200).end(JSON.stringify(keyInfo));
-        }
-    })
-    .catch((err) => res.end(err.toString()));
+        .then((keyInfo) => {
+            if (!keyInfo) {
+                res.status(401).end("Invalid API key");
+            } else {
+                res.status(200).end(JSON.stringify(keyInfo));
+            }
+        })
+        .catch((err) => res.end(err.toString()));
 }
 
 module.exports = {

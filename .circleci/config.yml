@@ -4,6 +4,18 @@
 #
 version: 2
 jobs:
+  lint:
+    working_directory: ~/hostmystuff
+    docker:
+      - image: node:12.11.1
+    steps:
+      - checkout
+      - run:
+          name: install packages
+          command: 'npm install'
+      - run:
+          name: Apply ESLint
+          command: './node_modules/.bin/eslint ./src/*.js ./app.js constants/* public/stylizer.js'
   build:
     machine:
       services:
@@ -36,10 +48,12 @@ workflows:
   version: 2
   build_and_deploy:
       jobs:
+        - lint
         - build
         - deploy:
             requires:
               - build
+              - lint
             filters:
                 branches:
                     only: master
