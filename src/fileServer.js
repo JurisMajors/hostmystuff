@@ -14,6 +14,7 @@ const fs = require("fs-extra");
 const { exec } = require("child_process");
 
 const isText = (mimetype) => mimetype.startsWith("text");
+const isNotHtml = (mimetype) => mimetype.trim() !== "text/html";
 
 const writeWithHighlight = (res, data) => {
     res.write("<script src=\"highlight.pack.js\"></script>");
@@ -27,7 +28,7 @@ const writeWithHighlight = (res, data) => {
 };
 
 const writeToHtml = (shouldBeRaw, res, data, mimetype, filePath) => {
-    if (isText(mimetype) && !shouldBeRaw) {
+    if (isText(mimetype) && isNotHtml(mimetype) && !shouldBeRaw) {
         writeWithHighlight(res, data);
     } else {
         mimetype = mimetype.replace(/(\r\n|\n|\r)/gm, "");
