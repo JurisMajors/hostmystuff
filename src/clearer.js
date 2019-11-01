@@ -22,7 +22,7 @@ const MAX_SIZE_IN_MIB = constants.MAX_SIZE_IN_MIB;
 function getClearingAge(minAge, maxAge, sizeInBytes) {
     const sizeInMiB = sizeInBytes / BYTES_IN_MIB;
     // see 0x0.st for this formula
-    return (minAge + (-maxAge + minAge) * Math.pow((sizeInMiB / MAX_SIZE_IN_MIB - 1), 3)) * 86400000;
+    return (minAge + (-maxAge + minAge) * Math.pow((sizeInMiB / MAX_SIZE_IN_MIB - 1), 3));
 }
 
 function isFileExpired(pathTo, CLEARING_MIN_AGE, CLEARING_MAX_AGE) {
