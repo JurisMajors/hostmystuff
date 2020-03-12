@@ -5,7 +5,7 @@
 
 
 
-[Hostmystuff](https://www.hostmystuff.xyz/) is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
+[Hostmystuff] is a simple private file-hosting service written in JS, using NodeJS and deployed in Docker.
 
 The homepage contains more detailed information, including
 * How to upload
