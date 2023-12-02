@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/JurisMajors/hostmystuff#readme",
   "dependencies": {
-    "busboy": "^0.3.1",
+    "busboy": "^1.0.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
